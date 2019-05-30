@@ -21,7 +21,7 @@ class DetailViewController: UIViewController {
             imageView.image = UIImage(named: imageToLoad)
         }
         
-        title = selectedImage
+//        title = selectedImage
         navigationItem.largeTitleDisplayMode = .never
     }
     
