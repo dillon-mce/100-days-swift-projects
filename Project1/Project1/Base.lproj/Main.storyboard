@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -18,11 +19,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="PictureCell" id="JXV-1d-O8u">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="PictureCell" id="JXV-1d-O8u">
                                 <rect key="frame" x="0.0" y="28" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JXV-1d-O8u" id="LIl-sZ-vTU">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="376" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -37,6 +38,35 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ne7-oM-3Ha" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="873.91304347826099" y="-51.5625"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="dGO-PT-gB1">
+            <objects>
+                <viewController storyboardIdentifier="DetailVC" id="fKL-VZ-TaV" customClass="DetailViewController" customModule="Project1" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="N3g-Cl-XkI">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bZU-d3-pNa">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="aQa-cP-rYg" firstAttribute="trailing" secondItem="bZU-d3-pNa" secondAttribute="trailing" id="0Zf-85-WGu"/>
+                            <constraint firstAttribute="bottom" secondItem="bZU-d3-pNa" secondAttribute="bottom" id="9TD-x9-vk2"/>
+                            <constraint firstItem="bZU-d3-pNa" firstAttribute="leading" secondItem="aQa-cP-rYg" secondAttribute="leading" id="fgt-pN-2k7"/>
+                            <constraint firstItem="bZU-d3-pNa" firstAttribute="top" secondItem="N3g-Cl-XkI" secondAttribute="top" id="wei-me-6v0"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="aQa-cP-rYg"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="bZU-d3-pNa" id="dXL-5V-kLM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zec-jh-MxD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1759" y="-52"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="UVh-HF-Ke3">
