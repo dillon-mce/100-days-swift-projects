@@ -11,8 +11,13 @@ import UIKit
 class ViewController: UIViewController {
 
     var countries: [String] = []
-    var score = 0
+    var score = 0 {
+        didSet {
+            updateTitle()
+        }
+    }
     var correctAnswer = 0
+    var answered = 0
     
     @IBOutlet var buttons: [UIButton]!
     
@@ -24,6 +29,10 @@ class ViewController: UIViewController {
     }
 
     func askQuestion(action: UIAlertAction! = nil) {
+        guard answered < 10 else {
+            presentEndOfGameAlert()
+            return
+        }
         countries.shuffle()
         
         for (index, button) in buttons.enumerated() {
@@ -32,29 +41,44 @@ class ViewController: UIViewController {
         
         correctAnswer = Int.random(in: 0..<buttons.count)
         
-        title = countries[correctAnswer].uppercased()
+        updateTitle()
     }
     
     @IBAction func pickFlag(_ sender: UIButton) {
-        var title: String
-
+        answered += 1
         if sender.tag == correctAnswer {
-            title = "Correct"
             score += 1
+            askQuestion()
         } else {
-            title = "Wrong"
             score -= 1
+            presentWrongAnswerAlert(country: countries[sender.tag].uppercased())
         }
-        
-        let ac = UIAlertController(title: title,
-                                   message: "Your score is \(score).",
-                                   preferredStyle: .alert)
+    }
+    
+    private func presentWrongAnswerAlert(country: String) {
+        let ac = UIAlertController(title: "Wrong!",
+                                   message: "That was \(country).",
+            preferredStyle: .alert)
         let action = UIAlertAction(title: "Continue",
                                    style: .default,
                                    handler: askQuestion)
         ac.addAction(action)
         present(ac, animated: true)
-        
+    }
+    
+    private func presentEndOfGameAlert() {
+        let ac = UIAlertController(title: "Game over!",
+                                   message: "Your score is \(score).",
+            preferredStyle: .alert)
+        let action = UIAlertAction(title: "New Game",
+                                   style: .default,
+                                   handler: resetGame)
+        ac.addAction(action)
+        present(ac, animated: true)
+    }
+    
+    private func updateTitle() {
+        title = "\(countries[correctAnswer].uppercased()) – Current Score: \(score)"
     }
     
     private func setup() {
@@ -75,6 +99,14 @@ class ViewController: UIViewController {
             button.addBorder()
             button.tag = index
         }
+        
+        resetGame()
+    }
+    
+    private func resetGame(action: UIAlertAction! = nil) {
+        answered = 0
+        score = 0
+        askQuestion()
     }
 
 }
