@@ -55,6 +55,17 @@ class ViewController: UIViewController {
         }
     }
     
+    @objc private func presentScoreAlert() {
+        let ac = UIAlertController(title: "Your Score",
+                                   message: "\(score) points after answering \(answered) questions",
+                                   preferredStyle: .alert)
+        let action = UIAlertAction(title: "Continue",
+                                   style: .default,
+                                   handler: { _ in self.dismiss(animated: true) })
+        ac.addAction(action)
+        present(ac, animated: true)
+    }
+    
     private func presentWrongAnswerAlert(country: String) {
         let ac = UIAlertController(title: "Wrong!",
                                    message: "That was \(country).",
@@ -78,7 +89,7 @@ class ViewController: UIViewController {
     }
     
     private func updateTitle() {
-        title = "\(countries[correctAnswer].uppercased()) – Current Score: \(score)"
+        title = "\(countries[correctAnswer].uppercased())"
     }
     
     private func setup() {
@@ -99,6 +110,8 @@ class ViewController: UIViewController {
             button.addBorder()
             button.tag = index
         }
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Check Score", style: .plain, target: self, action: #selector(presentScoreAlert))
         
         resetGame()
     }
