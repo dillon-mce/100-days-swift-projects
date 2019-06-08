@@ -13,7 +13,8 @@ class ViewController: UIViewController, WKNavigationDelegate {
     
     var webView: WKWebView!
     var progressView: UIProgressView!
-    var websites = ["dillon-mce.com", "apple.com"]
+    var websiteController: WebsiteController!
+    var selectedWebsite: String?
 
     override func loadView() {
         // Change the default view to be a WKWebView
@@ -25,39 +26,13 @@ class ViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.rightBarButtonItem =
-            UIBarButtonItem(title: "Open",
-                            style: .plain,
-                            target: self,
-                            action: #selector(openTapped))
+        setupViews()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         
-        // Set up the toolbar
-        progressView = UIProgressView(progressViewStyle: .default)
-        progressView.sizeToFit()
-        let progressButton = UIBarButtonItem(customView: progressView)
-        let spacer =
-            UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-                                     target: nil,
-                                     action: nil)
-        let refresh =
-            UIBarButtonItem(barButtonSystemItem: .refresh,
-                            target: webView,
-                            action: #selector(webView.reload))
-
-        toolbarItems = [progressButton, spacer, refresh]
-        navigationController?.isToolbarHidden = false
-        
-        let keyPath =
-            #keyPath(WKWebView.estimatedProgress)
-        webView.addObserver(self,
-                            forKeyPath: keyPath,
-                            options: .new,
-                            context: nil)
-        
-        // Load a default website
-        let url = URL(string: "https://" + websites[0])!
-        webView.load(URLRequest(url: url))
-        webView.allowsBackForwardNavigationGestures = true
+        navigationController?.isToolbarHidden = true
     }
 
     override func observeValue(forKeyPath keyPath: String?,
@@ -76,7 +51,7 @@ class ViewController: UIViewController, WKNavigationDelegate {
                                    preferredStyle: .actionSheet)
         
         // Make the actions
-        for website in websites {
+        for website in websiteController.allowedWebsites {
             let action = UIAlertAction(title: website,
                                        style: .default,
                                        handler: openPage)
@@ -99,6 +74,91 @@ class ViewController: UIViewController, WKNavigationDelegate {
         webView.load(URLRequest(url: url))
     }
     
+    func presentCancelledAlert(for host: String) {
+        let message = "Sorry, \(host) is not on the approved list."
+        let alertController = UIAlertController(title: "Can't go there!",
+                                                message: message,
+                                                preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel",
+                                         style: .cancel)
+        
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true)
+    }
+    
+    func setupViews() {
+        // Set up the navigation bar
+//        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.rightBarButtonItem =
+            UIBarButtonItem(title: "Open",
+                            style: .plain,
+                            target: self,
+                            action: #selector(openTapped))
+        
+        // Set up the progress view
+        progressView = UIProgressView(progressViewStyle: .default)
+        view.addSubview(progressView)
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        
+        progressView.leadingAnchor
+            .constraint(equalTo: view.leadingAnchor)
+            .isActive = true
+        progressView.trailingAnchor
+            .constraint(equalTo: view.trailingAnchor)
+            .isActive = true
+        progressView.bottomAnchor
+            .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            .isActive = true
+        
+        let keyPath =
+            #keyPath(WKWebView.estimatedProgress)
+        webView.addObserver(self,
+                            forKeyPath: keyPath,
+                            options: .new,
+                            context: nil)
+        
+        // Set up the toolbar
+        let backward =
+            UIBarButtonItem(title: "←",
+                            style: .plain,
+                            target: webView,
+                            action: #selector(webView.goBack))
+
+        let spacer1 =
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                            target: nil,
+                            action: nil)
+
+        let refresh =
+            UIBarButtonItem(barButtonSystemItem: .refresh,
+                            target: webView,
+                            action: #selector(webView.reload))
+        let spacer2 =
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                            target: nil,
+                            action: nil)
+
+        let forward =
+            UIBarButtonItem(title: "→",
+                            style: .plain,
+                            target: webView,
+                            action: #selector(webView.goForward))
+
+        toolbarItems = [backward, spacer1, refresh, spacer2, forward]
+        navigationController?.isToolbarHidden = false
+        
+        
+        // Load a default website
+        if let website = selectedWebsite {
+            title = website
+            let url = URL(string: "https://" + website)!
+            webView.load(URLRequest(url: url))
+            webView.allowsBackForwardNavigationGestures = true
+        }
+    }
+    
+    // MARK: - WK Navigation Delegate
     func webView(_ webView: WKWebView,
                  didFinish navigation: WKNavigation!) {
         title = webView.title
@@ -110,11 +170,11 @@ class ViewController: UIViewController, WKNavigationDelegate {
         let url = navigationAction.request.url
         
         if let host = url?.host {
-            for website in websites {
-                if host.contains(website) {
-                    decisionHandler(.allow)
-                    return
-                }
+            if websiteController.isAllowedToGo(to: host) {
+                decisionHandler(.allow)
+                return
+            } else {
+                presentCancelledAlert(for: host)
             }
         }
         decisionHandler(.cancel)

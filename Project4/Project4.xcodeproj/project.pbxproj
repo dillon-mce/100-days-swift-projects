@@ -12,6 +12,8 @@
 		349EB49C22A977FF00DD16C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 349EB49A22A977FF00DD16C4 /* Main.storyboard */; };
 		349EB49E22A9780000DD16C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 349EB49D22A9780000DD16C4 /* Assets.xcassets */; };
 		349EB4A122A9780000DD16C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 349EB49F22A9780000DD16C4 /* LaunchScreen.storyboard */; };
+		34CDF4AC22AC1F2C00E26C6F /* WebsiteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CDF4AB22AC1F2C00E26C6F /* WebsiteController.swift */; };
+		34CDF4AE22AC1FE900E26C6F /* WebsiteTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CDF4AD22AC1FE900E26C6F /* WebsiteTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		349EB49D22A9780000DD16C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		349EB4A022A9780000DD16C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		349EB4A222A9780000DD16C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		34CDF4AB22AC1F2C00E26C6F /* WebsiteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteController.swift; sourceTree = "<group>"; };
+		34CDF4AD22AC1FE900E26C6F /* WebsiteTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,8 @@
 			children = (
 				349EB49622A977FF00DD16C4 /* AppDelegate.swift */,
 				349EB49822A977FF00DD16C4 /* ViewController.swift */,
+				34CDF4AD22AC1FE900E26C6F /* WebsiteTableViewController.swift */,
+				34CDF4AB22AC1F2C00E26C6F /* WebsiteController.swift */,
 				349EB49A22A977FF00DD16C4 /* Main.storyboard */,
 				349EB49D22A9780000DD16C4 /* Assets.xcassets */,
 				349EB49F22A9780000DD16C4 /* LaunchScreen.storyboard */,
@@ -135,7 +141,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34CDF4AC22AC1F2C00E26C6F /* WebsiteController.swift in Sources */,
 				349EB49922A977FF00DD16C4 /* ViewController.swift in Sources */,
+				34CDF4AE22AC1FE900E26C6F /* WebsiteTableViewController.swift in Sources */,
 				349EB49722A977FF00DD16C4 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
