@@ -15,6 +15,12 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.leftBarButtonItem =
+            UIBarButtonItem(title: "New Game",
+                            style: .plain,
+                            target: self,
+                            action: #selector(startGame))
+        
         navigationItem.rightBarButtonItem =
             UIBarButtonItem(barButtonSystemItem: .add,
                             target: self,
@@ -24,15 +30,15 @@ class ViewController: UITableViewController {
     }
 
     
-    func startGame() {
+    @objc func startGame() {
         gameController.startGame()
         title = gameController.startWord
         tableView.reloadData()
     }
     
     func submit(_ answer: String) {
-        if let alert = gameController.checkAnswer(answer) {
-            present(alert, animated: true)
+        if let error = gameController.checkAnswer(answer) {
+            showErrorMessage(for: error);
         } else {
             let indexPath = IndexPath(row: 0, section: 0)
             tableView.insertRows(at: [indexPath], with: .automatic)
@@ -61,6 +67,17 @@ class ViewController: UITableViewController {
         
         // Add the action and present it
         alertController.addAction(submitAction)
+        present(alertController, animated: true)
+    }
+    
+    private func showErrorMessage(for error: AnswerError) {
+        let alertController =
+            UIAlertController(title: error.title(),
+                              message: error.message(),
+                              preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK",
+                                     style: .default)
+        alertController.addAction(okAction)
         present(alertController, animated: true)
     }
 

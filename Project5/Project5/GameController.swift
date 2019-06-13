@@ -28,7 +28,7 @@ class GameController {
         }
     }
     
-    // MARK: - Tableview Data Source
+    // MARK: - Tableview Data Source Helpers
     func numberOfRows(in section: Int = 0) -> Int {
         return usedWords.count
     }
@@ -43,71 +43,79 @@ class GameController {
         usedWords.removeAll()
     }
     
-    @discardableResult func checkAnswer(_ answer: String) -> UIAlertController? {
+    @discardableResult func checkAnswer(_ answer: String) -> AnswerError? {
         let lowerAnswer = answer.lowercased()
         
         guard isPossible(lowerAnswer) else {
-            return buildErrorAlert(for: .impossible(comparedTo: startWord))
+            return .impossible(comparedTo: startWord)
         }
         
         guard isOriginal(lowerAnswer) else {
-            return buildErrorAlert(for: .unoriginal)
+            return .unoriginal
         }
         
         guard isReal(lowerAnswer) else {
-            return buildErrorAlert(for: .unreal)
+            return .unreal
         }
         
-        usedWords.insert(answer, at: 0)
+        guard isLongEnough(lowerAnswer) else {
+            return .tooShort
+        }
+
+        guard isNotTheSame(lowerAnswer) else {
+            return .sameAsOriginal
+        }
+        
+        usedWords.insert(lowerAnswer, at: 0)
         
         return nil
     }
     
-private func isPossible(_ word: String) -> Bool {
-    var tempWord = startWord.lowercased()
-    
-    for letter in word {
-        if let position = tempWord.firstIndex(of: letter) {
-            tempWord.remove(at: position)
-        } else {
-            return false
+    private func isPossible(_ word: String) -> Bool {
+        var tempWord = startWord.lowercased()
+        
+        for letter in word {
+            if let position = tempWord.firstIndex(of: letter) {
+                tempWord.remove(at: position)
+            } else {
+                return false
+            }
         }
+        return true
     }
-    return true
-}
 
-private func isOriginal(_ word: String) -> Bool {
-    return !usedWords.contains(word)
-}
+    private func isOriginal(_ word: String) -> Bool {
+        return !usedWords.contains(word)
+    }
 
-private func isReal(_ word: String) -> Bool {
-    let checker = UITextChecker()
-    let range = NSRange(location: 0,
-                        length: word.utf16.count)
-    let misspelledRange =
-        checker.rangeOfMisspelledWord(in: word,
-                                      range: range,
-                                      startingAt: 0,
-                                      wrap: false,
-                                      language: "en")
-    return misspelledRange.location == NSNotFound
-}
+    private func isReal(_ word: String) -> Bool {
+        let checker = UITextChecker()
+        let range = NSRange(location: 0,
+                            length: word.utf16.count)
+        let misspelledRange =
+            checker.rangeOfMisspelledWord(in: word,
+                                          range: range,
+                                          startingAt: 0,
+                                          wrap: false,
+                                          language: "en")
+        return misspelledRange.location == NSNotFound
+    }
     
-    private func buildErrorAlert(for error: AnswerError) -> UIAlertController {
-        let alertController = UIAlertController(title: error.title(),
-                                                message: error.message(),
-                                                preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK",
-                                     style: .default)
-        alertController.addAction(okAction)
-        return alertController
+    private func isLongEnough(_ word: String) -> Bool {
+        return word.count > 3
+    }
+
+    private func isNotTheSame(_ word: String) -> Bool {
+        return word != startWord
     }
 }
 
-enum AnswerError {
+enum AnswerError: Equatable {
     case unoriginal
     case impossible (comparedTo: String)
     case unreal
+    case tooShort
+    case sameAsOriginal
     
     func title() -> String {
         switch (self) {
@@ -117,6 +125,10 @@ enum AnswerError {
             return "Word used already"
         case .unreal:
             return "Word not recognized"
+        case .tooShort:
+            return "Word too short"
+        case .sameAsOriginal:
+            return "Word isn't different"
         }
     }
     
@@ -128,6 +140,10 @@ enum AnswerError {
             return "Be more original!"
         case .unreal:
             return "You can't just make them up, you know!"
+        case .tooShort:
+            return "Words need to be at least four letters long!"
+        case .sameAsOriginal:
+            return "It doesn't count if it is the same word!"
         }
     }
 }

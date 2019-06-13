@@ -26,22 +26,43 @@ class Project5Tests: XCTestCase {
     func testValidWord() {
         let prevCount = gameController.numberOfRows()
 
-        let alert = gameController.checkAnswer("gumdrop")
+        let error = gameController.checkAnswer("gumdrop")
         
-        XCTAssertNil(alert, "Returned an alert for a valid word.")
+        XCTAssertNil(error, "Returned an error for a valid word.")
         XCTAssertEqual(gameController.numberOfRows(), prevCount + 1)
         let indexPath = IndexPath(row: 0, section: 0)
         XCTAssertEqual(gameController.word(for: indexPath), "gumdrop")
+    }
+    
+    func testSameWordCapitalAndLower() {
+        let prevCount = gameController.numberOfRows()
+        
+        gameController.checkAnswer("Gumdrop")
+        let error = gameController.checkAnswer("gumdrop")
+        
+        XCTAssertEqual(error, AnswerError.unoriginal)
+        XCTAssertEqual(gameController.numberOfRows(), prevCount + 1)
+        
+    }
+    
+    func testWeirdCases() {
+        let prevCount = gameController.numberOfRows()
+        
+        gameController.checkAnswer("GumDRop")
+        gameController.checkAnswer("gUmdrOp")
+        let error = gameController.checkAnswer("gumdrop")
+        
+        XCTAssertEqual(error, AnswerError.unoriginal)
+        XCTAssertEqual(gameController.numberOfRows(), prevCount + 1)
     }
     
     func testRepeatedWord() {
         let prevCount = gameController.numberOfRows()
         
         gameController.checkAnswer("drops")
-        let alert = gameController.checkAnswer("drops")
+        let error = gameController.checkAnswer("drops")
         
-        XCTAssertNotNil(alert)
-        XCTAssertEqual(alert?.title, AnswerError.unoriginal.title())
+        XCTAssertEqual(error, AnswerError.unoriginal)
         XCTAssertEqual(gameController.numberOfRows(), prevCount + 1)
         
     }
@@ -49,20 +70,36 @@ class Project5Tests: XCTestCase {
     func testUnrealWord() {
         let prevCount = gameController.numberOfRows()
         
-        let alert = gameController.checkAnswer("dropus")
+        let error = gameController.checkAnswer("dropus")
         
-        XCTAssertNotNil(alert)
-        XCTAssertEqual(alert?.title, AnswerError.unreal.title())
+        XCTAssertEqual(error, AnswerError.unreal)
         XCTAssertEqual(gameController.numberOfRows(), prevCount)
     }
 
     func testImpossibleWord() {
         let prevCount = gameController.numberOfRows()
         
-        let alert = gameController.checkAnswer("raindrop")
+        let error = gameController.checkAnswer("raindrop")
         
-        XCTAssertNotNil(alert)
-        XCTAssertEqual(alert?.title, AnswerError.impossible(comparedTo: startWord).title())
+        XCTAssertEqual(error, AnswerError.impossible(comparedTo: startWord))
+        XCTAssertEqual(gameController.numberOfRows(), prevCount)
+    }
+    
+    func testTooShortWord() {
+        let prevCount = gameController.numberOfRows()
+        
+        let error = gameController.checkAnswer("gum")
+        
+        XCTAssertEqual(error, AnswerError.tooShort)
+        XCTAssertEqual(gameController.numberOfRows(), prevCount)
+    }
+
+    func testSameWord() {
+        let prevCount = gameController.numberOfRows()
+        
+        let error = gameController.checkAnswer("gumdrops")
+        
+        XCTAssertEqual(error, AnswerError.sameAsOriginal)
         XCTAssertEqual(gameController.numberOfRows(), prevCount)
     }
 
