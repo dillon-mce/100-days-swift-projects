@@ -162,11 +162,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let action = UIContextualAction(style: .normal,
                                         title: "Complete")
         { (action, view, completion) in
-            if self.shoppingList.toggleCompletedOnItem(at: indexPath) {
-                completion(true)
-            } else {
-                completion(false)
-            }
+            completion(self.shoppingList.toggleCompletedOnItem(at: indexPath))
         }
         action.image = UIImage(named: "ok")
         action.backgroundColor = item.isCompleted ? .gray : .orange
