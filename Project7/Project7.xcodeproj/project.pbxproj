@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		347DC86022B941BC00C2EDB6 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347DC85F22B941BC00C2EDB6 /* DetailViewController.swift */; };
 		34EF292E22B81EAA00AD8D25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EF292D22B81EAA00AD8D25 /* AppDelegate.swift */; };
 		34EF293022B81EAA00AD8D25 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EF292F22B81EAA00AD8D25 /* ViewController.swift */; };
 		34EF293322B81EAA00AD8D25 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EF293122B81EAA00AD8D25 /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		347DC85F22B941BC00C2EDB6 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		34EF292A22B81EAA00AD8D25 /* Project7.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Project7.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34EF292D22B81EAA00AD8D25 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34EF292F22B81EAA00AD8D25 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 			children = (
 				34EF292D22B81EAA00AD8D25 /* AppDelegate.swift */,
 				34EF292F22B81EAA00AD8D25 /* ViewController.swift */,
+				347DC85F22B941BC00C2EDB6 /* DetailViewController.swift */,
 				34EF294D22B8214E00AD8D25 /* Petition.swift */,
 				34EF293122B81EAA00AD8D25 /* Main.storyboard */,
 				34EF293422B81EAB00AD8D25 /* Assets.xcassets */,
@@ -203,6 +206,7 @@
 				34EF293022B81EAA00AD8D25 /* ViewController.swift in Sources */,
 				34EF292E22B81EAA00AD8D25 /* AppDelegate.swift in Sources */,
 				34EF294E22B8214E00AD8D25 /* Petition.swift in Sources */,
+				347DC86022B941BC00C2EDB6 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

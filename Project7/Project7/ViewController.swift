@@ -35,22 +35,51 @@ class ViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView,
+                            didSelectRowAt indexPath: IndexPath) {
+        let detailVC = DetailViewController()
+        detailVC.detailItem = petitions[indexPath.row]
+        navigationController?.pushViewController(detailVC,
+                                                 animated: true)
+    }
+    
     private func loadPetitions() {
-        let urlString = "https://api.whitehouse.gov/v1/petitions.json?limit=100"
+        let urlString: String
+        
+        if navigationController?.tabBarItem.tag == 0 {
+            urlString = "https://api.whitehouse.gov/v1/petitions.json?limit=100"
+        } else {
+            urlString = "https://api.whitehouse.gov/v1/petitions.json?signatureCountFloor=100000&limit=100"
+        }
         
         if let url = URL(string: urlString),
             let data = try? Data(contentsOf: url) {
             parse(json: data)
+        } else {
+            showError()
         }
     }
 
     private func parse(json: Data) {
         let decoder = JSONDecoder()
         
-        if let jsonPetitions = try? decoder.decode(Petitions.self, from: json) {
+        if let jsonPetitions = try? decoder.decode(Petitions.self,
+                                                   from: json) {
             petitions = jsonPetitions.results
             tableView.reloadData()
+        } else {
+            showError()
         }
+    }
+    
+    private func showError() {
+        let alertController = UIAlertController(title: "Loading error",
+                                                message: "There was a problem loading the feed. Please check your connection and try again.",
+                                                preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ok",
+                                   style: .default)
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
     
 }
