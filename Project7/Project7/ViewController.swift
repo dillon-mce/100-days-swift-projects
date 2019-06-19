@@ -8,26 +8,37 @@
 
 import UIKit
 
-class ViewController: UITableViewController {
+class ViewController: UITableViewController, UISearchResultsUpdating {
 
-    var petitions: [Petition] = []
+    var petitions: [Petition] = [] {
+        didSet {
+            filterPetitions(with: searchController?.searchBar.text)
+        }
+    }
+    var filteredPetitions: [Petition] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    var searchController: UISearchController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadPetitions()
+        setupViews()
     }
 
+    // MARK: - UI Table View
     override func tableView(_ tableView: UITableView,
                             numberOfRowsInSection section: Int) -> Int {
-        return petitions.count
+        return filteredPetitions.count
     }
     
     override func tableView(_ tableView: UITableView,
                             cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell",
                                                  for: indexPath)
-        let petition = petitions[indexPath.row]
+        let petition = filteredPetitions[indexPath.row]
 
         cell.textLabel?.text = petition.title
         cell.detailTextLabel?.text = petition.body
@@ -38,18 +49,39 @@ class ViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
                             didSelectRowAt indexPath: IndexPath) {
         let detailVC = DetailViewController()
-        detailVC.detailItem = petitions[indexPath.row]
+        detailVC.detailItem = filteredPetitions[indexPath.row]
         navigationController?.pushViewController(detailVC,
                                                  animated: true)
+    }
+    
+    // MARK: - UI Search Results Updating
+    func updateSearchResults(for searchController: UISearchController) {
+        filterPetitions(with: searchController.searchBar.text)
+    }
+    
+    private func setupViews() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Credits", style: .plain, target: self, action: #selector(presentCreditAlert))
+        
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search Petitions"
+
+        navigationItem.searchController = searchController
+
+        definesPresentationContext = true
+        
+        loadPetitions()
     }
     
     private func loadPetitions() {
         let urlString: String
         
         if navigationController?.tabBarItem.tag == 0 {
-            urlString = "https://api.whitehouse.gov/v1/petitions.json?limit=100"
+            urlString = "https://api.whitehouse.gov/v1/petitions.json?limit=100&sortBy=date_reached_public"
         } else {
-            urlString = "https://api.whitehouse.gov/v1/petitions.json?signatureCountFloor=100000&limit=100"
+            urlString = "https://api.whitehouse.gov/v1/petitions.json?signatureCountFloor=100000&limit=100&sortBy=signature_count&sortOrder=desc"
         }
         
         if let url = URL(string: urlString),
@@ -73,8 +105,19 @@ class ViewController: UITableViewController {
     }
     
     private func showError() {
-        let alertController = UIAlertController(title: "Loading error",
-                                                message: "There was a problem loading the feed. Please check your connection and try again.",
+        presentInformationalAlert(title: .loadingErrorTitle,
+                                  message: .loadingErrorMessage)
+    }
+
+    @objc private func presentCreditAlert() {
+        presentInformationalAlert(title: .creditsTitle,
+                                  message: .creditsMessage)
+    }
+    
+    private func presentInformationalAlert(title: String,
+                                                 message: String? = nil) {
+        let alertController = UIAlertController(title: title,
+                                                message: message,
                                                 preferredStyle: .alert)
         let action = UIAlertAction(title: "Ok",
                                    style: .default)
@@ -82,5 +125,33 @@ class ViewController: UITableViewController {
         present(alertController, animated: true)
     }
     
+    private func filterPetitions(with string: String?) {
+        // Make sure there is a search term, otherwise set the filtered petitions to all the petitions
+        guard let searchTerm = string?.lowercased(),
+            !searchTerm.isEmpty else {
+            self.filteredPetitions = self.petitions
+            return
+        }
+        
+        // Get the petitions who's titles match
+        let titlesMatch = self.petitions.filter {
+            $0.title.lowercased().contains(searchTerm)
+        }
+        // Get the petitions who's bodies match and aren't in the first group
+        let bodiesMatch = self.petitions.filter {
+            $0.body.lowercased().contains(searchTerm) &&
+                titlesMatch.firstIndex(of: $0) == nil
+        }
+        
+        // Add them together and put them in the filtered array
+        self.filteredPetitions = titlesMatch + bodiesMatch
+    }
+    
 }
 
+extension String {
+    static let loadingErrorTitle = "Loading error"
+    static let loadingErrorMessage = "There was a problem loading the feed. Please check your connection and try again."
+    static let creditsTitle = "Credits"
+    static let creditsMessage = "Data comes from We The People API of the Whitehouse (api.whitehouse.gov)"
+}

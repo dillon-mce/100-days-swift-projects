@@ -8,9 +8,10 @@
 
 import Foundation
 
-struct Petition: Codable {
+struct Petition: Codable, Equatable {
     var title: String
     var body: String
+    var url: String
     var signatureCount: Int
 }
 
