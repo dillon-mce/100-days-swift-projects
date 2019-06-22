@@ -76,6 +76,9 @@ class ViewController: UIViewController {
         view.addSubview(clear)
         
         let buttonsView = UIView()
+        buttonsView.layer.borderColor = UIColor.lightGray.cgColor
+        buttonsView.layer.borderWidth = 2
+        buttonsView.layer.cornerRadius = 12
         buttonsView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(buttonsView)
         
@@ -140,25 +143,28 @@ class ViewController: UIViewController {
     @objc func submitAnswer(_ sender: UIButton) {
         guard let answerText = currentAnswer.text else { return }
 
-        guard let solutionPosition = solutions.firstIndex(of: answerText) else { return }
+        guard let solutionPosition = solutions.firstIndex(of: answerText) else {
+            score -= 1
+            presentAlert(title: "Wrong answer!",
+                         message: "Sorry, that isn't a valid word.",
+                         buttonTitle: "Ok")
+            return
+        }
 
         activatedButtons.removeAll()
         var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
         splitAnswers?[solutionPosition] = answerText
+        let isLevelOver = splitAnswers == solutions
         answersLabel.text = splitAnswers?.joined(separator: "\n")
 
         currentAnswer.text = ""
         score += 1
 
-        if score % 7 == 0 {
-            let alertController = UIAlertController(title: "Well done!",
-                                                    message: "Are you ready for the next level?",
-                                                    preferredStyle: .alert)
-            let action = UIAlertAction(title: "Let's go!",
-                                       style: .default,
-                                       handler: levelUp)
-            alertController.addAction(action)
-            present(alertController, animated: true)
+        if isLevelOver {
+            presentAlert(title: "Well done!",
+                         message: "Are you ready for the next level?",
+                         buttonTitle: "Let's go!",
+                         handler: levelUp)
         }
     }
 
@@ -222,6 +228,20 @@ class ViewController: UIViewController {
         for button in letterButtons {
             button.isHidden = false
         }
+    }
+    
+    func presentAlert(title: String,
+                      message: String,
+                      buttonTitle: String,
+                      handler: @escaping (UIAlertAction) -> Void = { _ in }) {
+        let alertController = UIAlertController(title: title,
+                                                message: message,
+                                                preferredStyle: .alert)
+        let action = UIAlertAction(title: buttonTitle,
+                                   style: .default,
+                                   handler: handler)
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
     
 }
