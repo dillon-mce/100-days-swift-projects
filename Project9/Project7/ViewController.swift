@@ -17,7 +17,7 @@ class ViewController: UITableViewController, UISearchResultsUpdating {
     }
     var filteredPetitions: [Petition] = [] {
         didSet {
-            tableView.reloadData()
+            DispatchQueue.main.async { self.tableView.reloadData() }
         }
     }
     var searchController: UISearchController!
@@ -99,8 +99,8 @@ class ViewController: UITableViewController, UISearchResultsUpdating {
         
         if let jsonPetitions = try? decoder.decode(Petitions.self,
                                                    from: json) {
-            petitions = jsonPetitions.results
             DispatchQueue.main.async { [weak self] in
+                self?.petitions = jsonPetitions.results
                 self?.tableView.reloadData()
             }
         } else {
@@ -132,25 +132,27 @@ class ViewController: UITableViewController, UISearchResultsUpdating {
     }
     
     private func filterPetitions(with string: String?) {
-        // Make sure there is a search term, otherwise set the filtered petitions to all the petitions
-        guard let searchTerm = string?.lowercased(),
-            !searchTerm.isEmpty else {
-            self.filteredPetitions = self.petitions
-            return
+        DispatchQueue.global().async {
+            // Make sure there is a search term, otherwise set the filtered petitions to all the petitions
+            guard let searchTerm = string?.lowercased(),
+                !searchTerm.isEmpty else {
+                    self.filteredPetitions = self.petitions
+                    return
+            }
+            
+            // Get the petitions who's titles match
+            let titlesMatch = self.petitions.filter {
+                $0.title.lowercased().contains(searchTerm)
+            }
+            // Get the petitions who's bodies match and aren't in the first group
+            let bodiesMatch = self.petitions.filter {
+                $0.body.lowercased().contains(searchTerm) &&
+                    titlesMatch.firstIndex(of: $0) == nil
+            }
+            
+            // Add them together and put them in the filtered array
+            self.filteredPetitions = titlesMatch + bodiesMatch
         }
-        
-        // Get the petitions who's titles match
-        let titlesMatch = self.petitions.filter {
-            $0.title.lowercased().contains(searchTerm)
-        }
-        // Get the petitions who's bodies match and aren't in the first group
-        let bodiesMatch = self.petitions.filter {
-            $0.body.lowercased().contains(searchTerm) &&
-                titlesMatch.firstIndex(of: $0) == nil
-        }
-        
-        // Add them together and put them in the filtered array
-        self.filteredPetitions = titlesMatch + bodiesMatch
     }
     
 }

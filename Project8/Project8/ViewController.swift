@@ -179,44 +179,48 @@ class ViewController: UIViewController {
     }
     
     private func loadLevel() {
-        var clueString = ""
-        var solutionString = ""
-        var letterBits: [String] = []
-
-        guard let levelFileURL = Bundle.main.url(forResource: "level\(level)",
-                                                 withExtension: "txt") else { return }
-        guard let levelContents = try? String(contentsOf: levelFileURL) else { return }
-
-        var lines = levelContents.components(separatedBy: "\n")
-        lines.shuffle()
-
-        for (index, line) in lines.enumerated() {
-            let parts = line.components(separatedBy: ": ")
-            let answer = parts[0]
-            let clue = parts[1]
+        DispatchQueue.global().async {
+            var clueString = ""
+            var solutionString = ""
+            var letterBits: [String] = []
             
-            clueString += "\(index + 1). \(clue)\n"
+            guard let levelFileURL = Bundle.main.url(forResource: "level\(self.level)",
+                withExtension: "txt") else { return }
+            guard let levelContents = try? String(contentsOf: levelFileURL) else { return }
             
-            let solutionWord = answer.replacingOccurrences(of: "|",
-                                                           with: "")
-            solutionString += "\(solutionWord.count) letters\n"
-            solutions.append(solutionWord)
+            var lines = levelContents.components(separatedBy: "\n")
+            lines.shuffle()
             
-            let bits = answer.components(separatedBy: "|")
-            letterBits += bits
-        }
-
-        cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
-        answersLabel.text = solutionString.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        letterBits.shuffle()
-
-        if letterBits.count == letterButtons.count {
-            for i in 0..<letterButtons.count {
-                letterButtons[i].setTitle(letterBits[i],
-                                          for: .normal)
+            for (index, line) in lines.enumerated() {
+                let parts = line.components(separatedBy: ": ")
+                let answer = parts[0]
+                let clue = parts[1]
+                
+                clueString += "\(index + 1). \(clue)\n"
+                
+                let solutionWord = answer.replacingOccurrences(of: "|",
+                                                               with: "")
+                solutionString += "\(solutionWord.count) letters\n"
+                self.solutions.append(solutionWord)
+                
+                let bits = answer.components(separatedBy: "|")
+                letterBits += bits
+            }
+            DispatchQueue.main.async {
+                self.cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
+                self.answersLabel.text = solutionString.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                letterBits.shuffle()
+                
+                if letterBits.count == self.letterButtons.count {
+                    for i in 0..<self.letterButtons.count {
+                        self.letterButtons[i].setTitle(letterBits[i],
+                                                  for: .normal)
+                    }
+                }
             }
         }
+
     }
     
     func levelUp(action: UIAlertAction) {
