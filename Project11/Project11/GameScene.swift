@@ -8,8 +8,27 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
+    
+    var scoreLabel: SKLabelNode!
+
+    var score = 0 {
+        didSet {
+            scoreLabel.text = "Score: \(score)"
+        }
+    }
+    
+    var editLabel: SKLabelNode!
+
+    var isInEditingMode: Bool = false {
+        didSet {
+            editLabel.text = isInEditingMode ? "Done" : "Edit"
+        }
+    }
+    
     override func didMove(to view: SKView) {
+        
+        physicsWorld.contactDelegate = self
         
         let background = SKSpriteNode(imageNamed: "background.jpg")
         background.position = CGPoint(x: 512, y: 384)
@@ -20,9 +39,27 @@ class GameScene: SKScene {
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         
         for i in 0..<5 {
-            let x = i*256
+            let x = i * 256
             makeBouncer(at: CGPoint(x: x, y: 0))
         }
+        
+        var isGood = false
+        for i in 0..<4 {
+            let x = i * 256 + 128
+            isGood.toggle()
+            makeSlot(at: CGPoint(x: x, y: 0), isGood: isGood)
+        }
+        
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Score: 0"
+        scoreLabel.horizontalAlignmentMode = .right
+        scoreLabel.position = CGPoint(x: 980, y: 700)
+        addChild(scoreLabel)
+        
+        editLabel = SKLabelNode(fontNamed: "Chalkduster")
+        editLabel.text = "Edit"
+        editLabel.position = CGPoint(x: 80, y: 700)
+        addChild(editLabel)
         
     }
     
@@ -30,12 +67,44 @@ class GameScene: SKScene {
         if let touch = touches.first {
             let location = touch.location(in: self)
             
-            let ball = SKSpriteNode(imageNamed: "ballRed")
-            ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
-            ball.physicsBody?.restitution = 0.4
-            ball.position = location
-            addChild(ball)
+            let objects = nodes(at: location)
+
+            if objects.contains(editLabel) {
+                isInEditingMode.toggle()
+            } else {
+                if isInEditingMode {
+                    makeBox(at: location)
+                } else {
+                    makeBall(at: location)
+                }
+            }
         }
+    }
+    
+    func makeBall(at position: CGPoint) {
+        guard position.y > 600 else { return }
+        let ball = SKSpriteNode(imageNamed: "ballRed")
+        ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
+        ball.physicsBody?.contactTestBitMask = ball.physicsBody!.collisionBitMask
+        ball.physicsBody?.restitution = 0.4
+        ball.position = position
+        ball.name = "ball"
+        addChild(ball)
+    }
+    
+    func makeBox(at position: CGPoint) {
+        guard position.y < 550, position.y > 100 else { return }
+        let size = CGSize(width: Int.random(in: 16...128),
+                          height: 16)
+        let box = SKSpriteNode(color: randomColor(),
+                               size: size)
+        box.zRotation = CGFloat.random(in: 0...3)
+        box.position = position
+        
+        box.physicsBody = SKPhysicsBody(rectangleOf: box.size)
+        box.physicsBody?.isDynamic = false
+        
+        addChild(box)
     }
     
     func makeBouncer(at position: CGPoint) {
@@ -43,6 +112,72 @@ class GameScene: SKScene {
         bouncer.position = position
         bouncer.physicsBody = SKPhysicsBody(circleOfRadius: bouncer.size.width / 2)
         bouncer.physicsBody?.isDynamic = false
+        bouncer.zPosition = 1
         addChild(bouncer)
+    }
+    
+    func makeSlot(at position: CGPoint, isGood: Bool) {
+        let slotBase: SKSpriteNode
+        let slotGlow: SKSpriteNode
+        
+        if isGood {
+            slotBase = SKSpriteNode(imageNamed: "slotBaseGood")
+            slotBase.name = "good"
+            slotGlow = SKSpriteNode(imageNamed: "slotGlowGood")
+        } else {
+            slotBase = SKSpriteNode(imageNamed: "slotBaseBad")
+            slotBase.name = "bad"
+            slotGlow = SKSpriteNode(imageNamed: "slotGlowBad")
+        }
+        
+        slotBase.position = position
+        slotGlow.position = position
+        
+        slotBase.physicsBody = SKPhysicsBody(rectangleOf: slotBase.size)
+        slotBase.physicsBody?.isDynamic = false
+        
+        addChild(slotBase)
+        addChild(slotGlow)
+        
+        let spin = SKAction.rotate(byAngle: .pi,
+                                   duration: Double.random(in: 8...15))
+        let spinForever = SKAction.repeatForever(spin)
+        slotGlow.run(spinForever)
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        guard let nodeA = contact.bodyA.node else { return }
+        guard let nodeB = contact.bodyB.node else { return }
+        
+        if nodeA.name == "ball" {
+            collisionBetween(ball: nodeA, object: nodeB)
+        } else if nodeB.name == "ball" {
+            collisionBetween(ball: nodeB, object: nodeA)
+        }
+    }
+    
+    func collisionBetween(ball: SKNode, object: SKNode) {
+        if object.name == "good" {
+            destroy(ball: ball)
+            score += 1
+        } else if object.name == "bad" {
+            destroy(ball: ball)
+            score -= 1
+        }
+    }
+
+    func destroy(ball: SKNode) {
+        ball.removeFromParent()
+    }
+    
+    func randomColor() -> UIColor {
+        let red = CGFloat.random(in: 0.3...1)
+        let green = CGFloat.random(in: 0.3...1)
+        let blue = CGFloat.random(in: 0.3...1)
+        
+        return UIColor(red: red,
+                       green: green,
+                       blue: blue,
+                       alpha: 1)
     }
 }
