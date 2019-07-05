@@ -10,11 +10,20 @@ import SpriteKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    var ballNames: [String] = []
     var scoreLabel: SKLabelNode!
 
     var score = 0 {
         didSet {
             scoreLabel.text = "Score: \(score)"
+        }
+    }
+    
+    var remainingLabel: SKLabelNode!
+
+    var remainingBalls = 5 {
+        didSet {
+            remainingLabel.text = "Remaining: \(remainingBalls)"
         }
     }
     
@@ -27,6 +36,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func didMove(to view: SKView) {
+        
+        let url = Bundle.main.bundleURL
+        if let files = try? FileManager.default.contentsOfDirectory(atPath: url.path) {
+            ballNames = files.filter({ $0.hasPrefix("ball") && !$0.contains("@2x") })
+            print(ballNames)
+        } else {
+            fatalError("Couldn't load any ball names")
+        }
         
         physicsWorld.contactDelegate = self
         
@@ -56,6 +73,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.position = CGPoint(x: 980, y: 700)
         addChild(scoreLabel)
         
+        remainingLabel = SKLabelNode(fontNamed: "Chalkduster")
+        remainingLabel.text = "Remaining: 5"
+        remainingLabel.horizontalAlignmentMode = .right
+        remainingLabel.position = CGPoint(x: 980, y: 660)
+        addChild(remainingLabel)
+        
+        
         editLabel = SKLabelNode(fontNamed: "Chalkduster")
         editLabel.text = "Edit"
         editLabel.position = CGPoint(x: 80, y: 700)
@@ -83,7 +107,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func makeBall(at position: CGPoint) {
         guard position.y > 600 else { return }
-        let ball = SKSpriteNode(imageNamed: "ballRed")
+        guard remainingBalls > 0 else { return }
+        remainingBalls -= 1
+        let ball = SKSpriteNode(imageNamed: ballNames.randomElement()!)
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2)
         ball.physicsBody?.contactTestBitMask = ball.physicsBody!.collisionBitMask
         ball.physicsBody?.restitution = 0.4
@@ -100,6 +126,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                size: size)
         box.zRotation = CGFloat.random(in: 0...3)
         box.position = position
+        box.name = "box"
         
         box.physicsBody = SKPhysicsBody(rectangleOf: box.size)
         box.physicsBody?.isDynamic = false
@@ -159,14 +186,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func collisionBetween(ball: SKNode, object: SKNode) {
         if object.name == "good" {
             destroy(ball: ball)
+            remainingBalls += 1
             score += 1
         } else if object.name == "bad" {
             destroy(ball: ball)
             score -= 1
+        } else if object.name == "box" {
+            score += 1
+            object.removeFromParent()
         }
     }
 
     func destroy(ball: SKNode) {
+        if let fireParticles = SKEmitterNode(fileNamed: "FireParticles") {
+            fireParticles.position = ball.position
+            addChild(fireParticles)
+        }
+        
         ball.removeFromParent()
     }
     
