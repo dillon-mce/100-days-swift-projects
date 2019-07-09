@@ -14,7 +14,7 @@
 		34EADEB422ADB4D800A5E229 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EADEB222ADB4D800A5E229 /* Main.storyboard */; };
 		34EADEB622ADB4D900A5E229 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 34EADEB522ADB4D900A5E229 /* Assets.xcassets */; };
 		34EADEB922ADB4D900A5E229 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EADEB722ADB4D900A5E229 /* LaunchScreen.storyboard */; };
-		34EADEC122ADB57D00A5E229 /* start.txt in Resources */ = {isa = PBXBuildFile; fileRef = 34EADEC022ADB57D00A5E229 /* start.txt */; };
+		34EADEC122ADB57D00A5E229 /* words.txt in Resources */ = {isa = PBXBuildFile; fileRef = 34EADEC022ADB57D00A5E229 /* words.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +39,7 @@
 		34EADEB522ADB4D900A5E229 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		34EADEB822ADB4D900A5E229 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		34EADEBA22ADB4D900A5E229 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		34EADEC022ADB57D00A5E229 /* start.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = start.txt; sourceTree = "<group>"; };
+		34EADEC022ADB57D00A5E229 /* words.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = words.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +96,7 @@
 				34EADEB222ADB4D800A5E229 /* Main.storyboard */,
 				34EADEB522ADB4D900A5E229 /* Assets.xcassets */,
 				34EADEB722ADB4D900A5E229 /* LaunchScreen.storyboard */,
-				34EADEC022ADB57D00A5E229 /* start.txt */,
+				34EADEC022ADB57D00A5E229 /* words.txt */,
 				34EADEBA22ADB4D900A5E229 /* Info.plist */,
 			);
 			path = Project5;
@@ -191,7 +191,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34EADEB922ADB4D900A5E229 /* LaunchScreen.storyboard in Resources */,
-				34EADEC122ADB57D00A5E229 /* start.txt in Resources */,
+				34EADEC122ADB57D00A5E229 /* words.txt in Resources */,
 				34EADEB622ADB4D900A5E229 /* Assets.xcassets in Resources */,
 				34EADEB422ADB4D800A5E229 /* Main.storyboard in Resources */,
 			);

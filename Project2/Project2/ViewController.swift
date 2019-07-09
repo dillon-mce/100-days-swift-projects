@@ -117,9 +117,26 @@ class ViewController: UIViewController {
     }
     
     private func resetGame(action: UIAlertAction! = nil) {
+        let highScore = UserDefaults.standard.integer(forKey: "highScore")
+        if score > highScore {
+            UserDefaults.standard.set(score, forKey: "highScore")
+            presentHighScoreAlert(new: score, prev: highScore)
+        }
         answered = 0
         score = 0
         askQuestion()
+    }
+    
+    private func presentHighScoreAlert(new: Int, prev: Int) {
+        let alertController = UIAlertController(title: "New High Score!",
+                                                message: "New high score: \(new)\nPrevious high score:\(prev)",
+                                                preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Cool!",
+                                   style: .default)
+        alertController.addAction(action)
+        
+        present(alertController, animated: true)
     }
 
 }

@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UITableViewController {
     
     var pictures: [String] = []
+    var viewCounts: [String: Int] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +22,12 @@ class ViewController: UITableViewController {
         
         print("Finished viewDidLoad")
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tableView.reloadData()
+    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return pictures.count
@@ -28,7 +35,9 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PictureCell", for: indexPath)
-        cell.textLabel?.text = pictures[indexPath.row]
+        let imageName = pictures[indexPath.row]
+        cell.textLabel?.text = imageName
+        cell.detailTextLabel?.text = "Views: \(viewCounts[imageName, default: 0])"
         
         return cell
     }
@@ -38,7 +47,11 @@ class ViewController: UITableViewController {
         if let detailViewController = storyboard?
             .instantiateViewController(withIdentifier: "DetailVC")
             as? DetailViewController {
-            detailViewController.selectedImage = pictures[indexPath.row]
+            let imageName = pictures[indexPath.row]
+            viewCounts[imageName, default: 0] += 1
+            save()
+            
+            detailViewController.selectedImage = imageName
             detailViewController.title = "Picture \(indexPath.row + 1) of \(pictures.count)"
             
             navigationController?
@@ -59,10 +72,22 @@ class ViewController: UITableViewController {
             }
             
             self.pictures.sort()
+            self.loadViewCounts()
             print("Finished loading pictures")
             DispatchQueue.main.async {
+                
                 self.tableView.reloadData()
             }
+        }
+    }
+    
+    func save() {
+        UserDefaults.standard.set(viewCounts, forKey: "viewCounts")
+    }
+
+    func loadViewCounts() {
+        if let savedViews = UserDefaults.standard.dictionary(forKey: "viewCounts") as? [String: Int] {
+            viewCounts = savedViews
         }
     }
 }

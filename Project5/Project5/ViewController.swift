@@ -26,12 +26,20 @@ class ViewController: UITableViewController {
                             target: self,
                             action: #selector(promptForAnswer))
         
-        startGame()
+        if gameController.startWord != "" {
+            updateViews()
+        } else {
+            startGame()
+        }
     }
 
     
     @objc func startGame() {
         gameController.startGame()
+        updateViews()
+    }
+
+    func updateViews() {
         title = gameController.startWord
         tableView.reloadData()
     }

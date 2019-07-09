@@ -22,6 +22,8 @@ class ViewController:
             UIBarButtonItem(barButtonSystemItem: .add,
                             target: self,
                             action: #selector(addNewPerson))
+        
+        load()
     }
 
 
@@ -71,14 +73,15 @@ class ViewController:
                             image: imageName)
         people.append(person)
         collectionView.reloadData()
+        save()
         dismiss(animated: true)
 }
     
     @objc func addNewPerson() {
         let picker = UIImagePickerController()
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            picker.sourceType = .camera
-        }
+//        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+//            picker.sourceType = .camera
+//        }
         picker.allowsEditing = true
         picker.delegate = self
         present(picker, animated: true)
@@ -106,6 +109,7 @@ class ViewController:
             guard let selfVC = self else { return }
             selfVC.people.remove(at: indexPath.row)
             selfVC.collectionView.deleteItems(at: [indexPath])
+            selfVC.save()
         }
         alertController.addAction(deleteAction)
         
@@ -136,10 +140,36 @@ class ViewController:
             person.name = newName
             
             self?.collectionView.reloadItems(at: [indexPath])
+            self?.save()
         }
         
         alertController.addAction(saveAction)
         present(alertController, animated: true)
+    }
+    
+    private func save() {
+        let jsonEncoder = JSONEncoder()
+        if let savedData = try? jsonEncoder.encode(people) {
+            UserDefaults.standard.set(savedData,
+                                      forKey: "people")
+        } else {
+            print("Failed to save people.")
+        }
+    }
+
+    private func load() {
+        let defaults = UserDefaults.standard
+        
+        if let savedPeople = defaults.object(forKey: "people") as? Data {
+            let jsonDecoder = JSONDecoder()
+            
+            do {
+                people = try jsonDecoder.decode([Person].self,
+                                                from: savedPeople)
+            } catch {
+                print("Failed to load people:\n\(error)")
+            }
+        }
     }
 }
 

@@ -16,7 +16,7 @@ class GameController {
     
     init() {
         // Pull the list of words out of the file
-        if let startWordsURL = Bundle.main.url(forResource: "start",
+        if let startWordsURL = Bundle.main.url(forResource: "words",
                                                withExtension: "txt"),
             let startWords = try? String(contentsOf: startWordsURL) {
             allWords = startWords.components(separatedBy: "\n")
@@ -26,6 +26,10 @@ class GameController {
         if allWords.isEmpty {
             allWords = ["silkworm"]
         }
+        
+        // Pull saved info out
+        startWord = UserDefaults.standard.string(forKey: "startWord") ?? ""
+        usedWords = UserDefaults.standard.array(forKey: "usedWords") as? [String] ?? []
     }
     
     // MARK: - Tableview Data Source Helpers
@@ -41,6 +45,7 @@ class GameController {
     func startGame() {
         startWord = allWords.randomElement() ?? "silkworm"
         usedWords.removeAll()
+        save()
     }
     
     @discardableResult func checkAnswer(_ answer: String) -> AnswerError? {
@@ -67,6 +72,7 @@ class GameController {
         }
         
         usedWords.insert(lowerAnswer, at: 0)
+        save()
         
         return nil
     }
@@ -107,6 +113,13 @@ class GameController {
 
     private func isNotTheSame(_ word: String) -> Bool {
         return word != startWord
+    }
+    
+    
+    private func save() {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(usedWords, forKey: "usedWords")
+        userDefaults.set(startWord, forKey: "startWord")
     }
 }
 
