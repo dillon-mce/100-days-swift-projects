@@ -13,13 +13,21 @@ class ViewController: UIViewController,
                       UINavigationControllerDelegate,
                       UIImagePickerControllerDelegate {
 
+    @IBOutlet var controlStackView: UIStackView!
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var intensitySlider: UISlider!
+    @IBOutlet var filterButton: UIButton!
     var currentImage: UIImage!
     
     var context: CIContext!
-    var currentFilter: CIFilter!
+    var currentFilter: CIFilter! {
+        didSet {
+            if let title = currentFilter.attributes[kCIAttributeFilterDisplayName] as? String {
+                filterButton.setTitle(title, for: .normal)
+            }
+        }
+    }
     
+    private var sliders: [FilterInputSlider] = []
     private let filters = ["CIBumpDistortion",
                    "CIGaussianBlur",
                    "CIPixellate",
@@ -59,16 +67,16 @@ class ViewController: UIViewController,
     }
 
     @IBAction func save(_ sender: Any) {
-        guard let image = imageView.image else { return }
+        guard let image = imageView.image else {
+            presentErrorAlert(title: "No Photo",
+                              message: "You can't save a photo that doesn't exist.")
+            return
+        }
 
         UIImageWriteToSavedPhotosAlbum(image,
                                        self,
                                        #selector(image(_:didFinishSavingWithError:contextInfo:)),
                                        nil)
-    }
-
-    @IBAction func intensityChanged(_ sender: Any) {
-        applyProcessing()
     }
     
     func imagePickerController(_ picker: UIImagePickerController,
@@ -94,23 +102,20 @@ class ViewController: UIViewController,
         present(picker, animated: true)
     }
     
-    func applyProcessing() {
+    @objc func applyProcessing() {
         guard let image = currentFilter.outputImage else { return }
-        let inputKeys = currentFilter.inputKeys
         
-        if inputKeys.contains(kCIInputIntensityKey) {
-            currentFilter.setValue(intensitySlider.value,
-                                   forKey: kCIInputIntensityKey) }
-        if inputKeys.contains(kCIInputRadiusKey) {
-            currentFilter.setValue(intensitySlider.value * 200,
-                                   forKey: kCIInputRadiusKey) }
-        if inputKeys.contains(kCIInputScaleKey) {
-            currentFilter.setValue(intensitySlider.value * 10,
-                                   forKey: kCIInputScaleKey) }
-        if inputKeys.contains(kCIInputCenterKey) {
+        if currentFilter.inputKeys.contains(kCIInputCenterKey) {
             currentFilter.setValue(CIVector(x: currentImage.size.width / 2,
                                             y: currentImage.size.height / 2),
-                                   forKey: kCIInputCenterKey) }
+                                   forKey: kCIInputCenterKey)
+        }
+        
+        for sliderAttribute in sliders {
+            let value = sliderAttribute.slider.value
+            currentFilter.setValue(value,
+                                   forKey: sliderAttribute.attributeName)
+        }
         
         if let cgimg = context.createCGImage(image,
                                              from: image.extent) {
@@ -120,7 +125,11 @@ class ViewController: UIViewController,
     }
     
     func setFilter(action: UIAlertAction) {
-        guard currentImage != nil else { return }
+        guard currentImage != nil else {
+            presentErrorAlert(title: "No Photo",
+                              message: "You have to pick a photo before you set the filter.")
+            return
+        }
         
         guard let actionTitle = action.title else { return }
         
@@ -129,32 +138,64 @@ class ViewController: UIViewController,
         let beginImage = CIImage(image: currentImage)
         currentFilter.setValue(beginImage,
                                forKey: kCIInputImageKey)
+        buildSliders()
         
         applyProcessing()
     }
     
-@objc func image(_ image: UIImage,
-                 didFinishSavingWithError error: Error?,
-                 contextInfo: UnsafeRawPointer) {
+    private func buildSliders() {
+        for slider in sliders {
+            controlStackView.removeArrangedSubview(slider.view)
+            slider.view.removeFromSuperview()
+        }
+        
+        guard let currentFilter = currentFilter else { return }
+        sliders = currentFilter.attributes
+            .compactMap { FilterInputSlider(name: $0, attributes: $1) }
+            .sorted { $0.displayName > $1.displayName }
+        
+        let layoutGuide = UILayoutGuide()
+        view.addLayoutGuide(layoutGuide)
+        
+        for (_, sliderInput) in sliders.enumerated() {
+            controlStackView.insertArrangedSubview(sliderInput.view, at: 0)
+            
+            let slider = sliderInput.slider
+            
+            let equalWidth = slider.widthAnchor.constraint(equalTo: layoutGuide.widthAnchor)
+            equalWidth.isActive = true
+            
+            slider.addTarget(self, action: #selector(applyProcessing), for: .valueChanged)
+        }
+    }
     
-    if let error = error {
-        let alertController = UIAlertController(title: "Save Error",
-                                                message: error.localizedDescription,
-                                                preferredStyle: .alert)
-        alertController.add("Ok",
-                            style: .default)
-        present(alertController,
-                animated: true)
-    } else {
-        let alertController = UIAlertController(title: "Saved!",
-                                                message: "Your altered image has been saved to your photos.",
+    @objc func image(_ image: UIImage,
+                     didFinishSavingWithError error: Error?,
+                     contextInfo: UnsafeRawPointer) {
+        
+        if let error = error {
+            presentErrorAlert(title: "Save Error",
+                              message: error.localizedDescription)
+        } else {
+            let alertController = UIAlertController(title: "Saved!",
+                                                    message: "Your altered image has been saved to your photos.",
+                                                    preferredStyle: .alert)
+            alertController.add("Ok",
+                                style: .default)
+            present(alertController,
+                    animated: true)
+        }
+    }
+    
+    func presentErrorAlert(title: String?, message: String? = nil) {
+        let alertController = UIAlertController(title: title,
+                                                message: message,
                                                 preferredStyle: .alert)
         alertController.add("Ok",
                             style: .default)
         present(alertController,
                 animated: true)
     }
-}
 }
 
 extension UIAlertController {
