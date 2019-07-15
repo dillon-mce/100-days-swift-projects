@@ -139,7 +139,7 @@ class ViewController: UIViewController,
         currentFilter.setValue(beginImage,
                                forKey: kCIInputImageKey)
         buildSliders()
-        
+
         applyProcessing()
     }
     
