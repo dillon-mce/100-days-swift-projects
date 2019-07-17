@@ -11,6 +11,7 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    var numRounds = 0
     var popupTime = 0.85
     var slots: [WhackSlot] = []
     var gameScore: SKLabelNode!
@@ -44,8 +45,35 @@ class GameScene: SKScene {
         }
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>,
+                               with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let tappedNodes = nodes(at: location)
         
+        for node in tappedNodes {
+            guard let whackSlot = node.parent?.parent as? WhackSlot else {
+                continue
+            }
+            
+            if !whackSlot.isVisible || whackSlot.isHit { continue }
+            
+            if node.name == "charFriend" {
+                whackSlot.hit()
+                score -= 5
+                
+                run(SKAction.playSoundFileNamed("whackBad.caf",
+                                                waitForCompletion: false))
+            } else if node.name == "charEnemy" {
+                
+                whackSlot.hit()
+                score += 1
+                numRounds -= 1
+                
+                run(SKAction.playSoundFileNamed("whack.caf",
+                                                waitForCompletion: false))
+            }
+        }
     }
     
     func createSlot(at position: CGPoint) {
@@ -56,7 +84,14 @@ class GameScene: SKScene {
     }
     
     func createEnemy() {
-        popupTime *= 0.991
+        numRounds += 1
+
+        if numRounds >= 20 {
+            endGame()
+            return
+        }
+        
+        if popupTime > 0.18 { popupTime *= 0.991 }
         
         slots.shuffle()
         slots[0].show(hideTime: popupTime)
@@ -74,6 +109,29 @@ class GameScene: SKScene {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             self?.createEnemy()
         }
+    }
+    
+    func endGame() {
+        for slot in slots {
+            slot.hide()
+        }
+        let gameOver = SKSpriteNode(imageNamed: "gameOver")
+        gameOver.position = CGPoint(x: 512, y: 384)
+        gameOver.zPosition = 1
+        
+        let scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Final Score: \(score)"
+        scoreLabel.position = CGPoint(x: 0, y: -72)
+        scoreLabel.horizontalAlignmentMode = .center
+        scoreLabel.fontSize = 48
+        gameOver.addChild(scoreLabel)
+
+        gameScore.isHidden = true
+
+        addChild(gameOver)
+        
+        run(SKAction.playSoundFileNamed("gameOver.aif",
+                                        waitForCompletion: false))
     }
 
 }

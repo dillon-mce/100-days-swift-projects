@@ -24,6 +24,9 @@
 		34E63FBC22DCDCFB008F2304 /* whackMask@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E63FB422DCDCFB008F2304 /* whackMask@2x.png */; };
 		34E63FBD22DCDCFB008F2304 /* whackBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 34E63FB522DCDCFB008F2304 /* whackBackground@2x.png */; };
 		34E63FBF22DCE197008F2304 /* WhackSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E63FBE22DCE197008F2304 /* WhackSlot.swift */; };
+		34F9E6C722DE8AAA007CB221 /* gameOver.aif in Resources */ = {isa = PBXBuildFile; fileRef = 34F9E6C622DE8AAA007CB221 /* gameOver.aif */; };
+		34F9E6C922DE92A9007CB221 /* smoke.sks in Resources */ = {isa = PBXBuildFile; fileRef = 34F9E6C822DE92A9007CB221 /* smoke.sks */; };
+		34F9E6CB22DE975F007CB221 /* mud.sks in Resources */ = {isa = PBXBuildFile; fileRef = 34F9E6CA22DE975F007CB221 /* mud.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +61,9 @@
 		34E63FB422DCDCFB008F2304 /* whackMask@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whackMask@2x.png"; sourceTree = "<group>"; };
 		34E63FB522DCDCFB008F2304 /* whackBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whackBackground@2x.png"; sourceTree = "<group>"; };
 		34E63FBE22DCE197008F2304 /* WhackSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhackSlot.swift; sourceTree = "<group>"; };
+		34F9E6C622DE8AAA007CB221 /* gameOver.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = gameOver.aif; sourceTree = SOURCE_ROOT; };
+		34F9E6C822DE92A9007CB221 /* smoke.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = smoke.sks; sourceTree = "<group>"; };
+		34F9E6CA22DE975F007CB221 /* mud.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = mud.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,10 +108,13 @@
 				34E63F8722DCDBE9008F2304 /* AppDelegate.swift */,
 				34E63F8922DCDBE9008F2304 /* GameScene.sks */,
 				34E63F8D22DCDBE9008F2304 /* GameScene.swift */,
+				34F9E6C822DE92A9007CB221 /* smoke.sks */,
+				34F9E6CA22DE975F007CB221 /* mud.sks */,
 				34E63F8F22DCDBE9008F2304 /* GameViewController.swift */,
 				34E63FBE22DCE197008F2304 /* WhackSlot.swift */,
 				34E63F9122DCDBE9008F2304 /* Main.storyboard */,
 				34E63F9422DCDBEA008F2304 /* Assets.xcassets */,
+				34F9E6C622DE8AAA007CB221 /* gameOver.aif */,
 				34E63FAD22DCDCFB008F2304 /* Content */,
 				34E63F9622DCDBEA008F2304 /* LaunchScreen.storyboard */,
 				34E63F9922DCDBEA008F2304 /* Info.plist */,
@@ -221,7 +230,9 @@
 				34E63FBC22DCDCFB008F2304 /* whackMask@2x.png in Resources */,
 				34E63FB622DCDCFB008F2304 /* whackBad.caf in Resources */,
 				34E63F9322DCDBE9008F2304 /* Main.storyboard in Resources */,
+				34F9E6CB22DE975F007CB221 /* mud.sks in Resources */,
 				34E63F8A22DCDBE9008F2304 /* GameScene.sks in Resources */,
+				34F9E6C722DE8AAA007CB221 /* gameOver.aif in Resources */,
 				34E63F9522DCDBEA008F2304 /* Assets.xcassets in Resources */,
 				34E63FBD22DCDCFB008F2304 /* whackBackground@2x.png in Resources */,
 				34E63FBA22DCDCFB008F2304 /* whackHole@2x.png in Resources */,
@@ -230,6 +241,7 @@
 				34E63FB822DCDCFB008F2304 /* gameOver@2x.png in Resources */,
 				34E63FBB22DCDCFB008F2304 /* penguinGood@2x.png in Resources */,
 				34E63FB722DCDCFB008F2304 /* whack.caf in Resources */,
+				34F9E6C922DE92A9007CB221 /* smoke.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
