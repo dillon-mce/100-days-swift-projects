@@ -50,7 +50,7 @@ class ViewController: UIViewController,
         currentFilter = CIFilter(name: "CISepiaTone")
     }
 
-    @IBAction func changeFilter(_ sender: Any) {
+    @IBAction func changeFilter(_ sender: UIButton) {
         let alertController = UIAlertController(title: "Choose Filter",
                                                 message: nil,
                                                 preferredStyle: .actionSheet)
@@ -62,7 +62,7 @@ class ViewController: UIViewController,
         }
 
         alertController.add("Cancel")
-
+        alertController.popoverPresentationController?.sourceView = sender
         present(alertController, animated: true)
     }
 
@@ -83,22 +83,33 @@ class ViewController: UIViewController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[.editedImage] as? UIImage else { return }
         
-        dismiss(animated: true)
-        
         currentImage = image
         
         let beginImage = CIImage(image: currentImage)
         currentFilter.setValue(beginImage,
                                forKey: kCIInputImageKey)
-
+        
         applyProcessing()
         
+        dismiss(animated: true) {
+            UIView.animate(withDuration: 0.5) {
+                self.imageView.alpha = 1
+            }
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        imageView.alpha = 1
+        dismiss(animated: true)
     }
     
     @objc func importPicture() {
         let picker = UIImagePickerController()
         picker.allowsEditing = true
         picker.delegate = self
+        UIView.animate(withDuration: 0.1) {
+            self.imageView.alpha = 0
+        }
         present(picker, animated: true)
     }
     

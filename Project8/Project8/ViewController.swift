@@ -24,6 +24,8 @@ class ViewController: UIViewController {
     }
     var level = 1
     
+    private let fadeDuration = 0.3
+    
     override func loadView() {
         view = UIView()
         view.backgroundColor = .white
@@ -113,7 +115,8 @@ class ViewController: UIViewController {
 
         for row in 0...3 {
             for col in 0...4 {
-                let letterButton = UIButton(type: .system)
+                let letterButton = UIButton(type: .custom)
+                letterButton.setTitleColor(.systemBlue, for: .normal)
                 letterButton.titleLabel?.font = UIFont.systemFont(ofSize: 36)
                 letterButton.setTitle("WWW", for: .normal)
                 letterButton.addTarget(self,
@@ -137,7 +140,9 @@ class ViewController: UIViewController {
         guard let buttonTitle = sender.titleLabel?.text else { return }
         currentAnswer.text = currentAnswer.text?.appending(buttonTitle)
         activatedButtons.append(sender)
-        sender.isHidden = true
+        UIView.animate(withDuration: fadeDuration) {
+            sender.alpha = 0
+        }
     }
 
     @objc func submitAnswer(_ sender: UIButton) {
@@ -170,9 +175,11 @@ class ViewController: UIViewController {
 
     @objc func clearAnswer(_ sender: UIButton) {
         currentAnswer.text = ""
-
-        for button in activatedButtons {
-            button.isHidden = false
+        
+        UIView.animate(withDuration: fadeDuration*2) {
+            for button in self.activatedButtons {
+                button.alpha = 1
+            }
         }
 
         activatedButtons.removeAll()
@@ -230,7 +237,7 @@ class ViewController: UIViewController {
         loadLevel()
         
         for button in letterButtons {
-            button.isHidden = false
+            button.alpha = 1
         }
     }
     
@@ -250,3 +257,6 @@ class ViewController: UIViewController {
     
 }
 
+extension UIColor {
+    static let systemBlue = UIColor(red: 0, green: 0.5, blue: 1, alpha: 1)
+}

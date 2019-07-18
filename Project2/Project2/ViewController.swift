@@ -45,13 +45,24 @@ class ViewController: UIViewController {
     }
     
     @IBAction func pickFlag(_ sender: UIButton) {
-        answered += 1
-        if sender.tag == correctAnswer {
-            score += 1
-            askQuestion()
-        } else {
-            score -= 1
-            presentWrongAnswerAlert(country: countries[sender.tag].uppercased())
+        UIView.animate(withDuration: 0.3,
+                       delay: 0,
+                       usingSpringWithDamping: 0.5,
+                       initialSpringVelocity: 1,
+                       options: [],
+                       animations: {
+            sender.transform = CGAffineTransform(scaleX: 0.8,
+                                                 y: 0.8)
+        }) { _ in
+            sender.transform = .identity
+            self.answered += 1
+            if sender.tag == self.correctAnswer {
+                self.score += 1
+                self.askQuestion()
+            } else {
+                self.score -= 1
+                self.presentWrongAnswerAlert(country: self.countries[sender.tag].uppercased())
+            }
         }
     }
     
