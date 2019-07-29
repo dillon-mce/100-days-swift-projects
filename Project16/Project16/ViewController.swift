@@ -47,6 +47,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
                                  info: "Named after George himself.")
 
         mapView.addAnnotations([london, oslo, paris, rome, washington])
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Change Map Style", style: .plain, target: self, action: #selector(presentMapTypeAlertController))
     }
 
     func mapView(_ mapView: MKMapView,
@@ -56,7 +58,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let identifier = "Capital"
 
         var annotationView = mapView
-            .dequeueReusableAnnotationView(withIdentifier: identifier)
+            .dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
 
         if annotationView == nil {
             annotationView = MKPinAnnotationView(annotation: annotation,
@@ -68,6 +70,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
         } else {
             annotationView?.annotation = annotation
         }
+        
+        annotationView?.pinTintColor = .cyan
 
         return annotationView
     }
@@ -79,17 +83,59 @@ class ViewController: UIViewController, MKMapViewDelegate {
         guard let capital = view.annotation as? Capital else { return }
 
         let placeName = capital.title
-        let placeInfo = capital.info
 
-        let alertController = UIAlertController(title: placeName,
-                                                message: placeInfo,
-                                                preferredStyle: .alert)
-        let action = UIAlertAction(title: "Ok",
-                                   style: .default)
-        alertController.addAction(action)
+        let webViewController = WebViewController()
+        webViewController.selectedItem = placeName
 
-        present(alertController,
-                animated: true)
+        navigationController?.pushViewController(webViewController,
+                                                 animated: true)
+    }
+    
+    @objc private func presentMapTypeAlertController() {
+        let alertController =
+            UIAlertController(title: "Map Display Type",
+                              message: "How would you like to display the map?",
+                              preferredStyle: .actionSheet)
+        
+        for mapType in MapType.allCases {
+            let action = UIAlertAction(title: mapType.rawValue,
+                                       style: .default,
+                                       handler: changeMapType)
+            
+            alertController.addAction(action)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel",
+                                         style: .cancel)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true)
+    }
+    
+    private func changeMapType(_ action: UIAlertAction) {
+        let mapType = MapType(rawValue: action.title!)!
+        
+        mapView.mapType = mapType.mapType()
+    }
+    
+    enum MapType: String, CaseIterable {
+        case standard = "Standard"
+        case muted = "Muted"
+        case hybrid = "Hybrid"
+        case satellite = "Satellite"
+        
+        func mapType() -> MKMapType {
+            switch self {
+            case .standard:
+                return .standard
+            case .muted:
+                return .mutedStandard
+            case .hybrid:
+                return .hybrid
+            case .satellite:
+                return .satellite
+            }
+        }
     }
 
 }

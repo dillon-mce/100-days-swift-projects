@@ -14,6 +14,7 @@
 		34B8276A22E3779E00ED0034 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34B8276822E3779E00ED0034 /* LaunchScreen.storyboard */; };
 		34B8277522E3779E00ED0034 /* Project16Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B8277422E3779E00ED0034 /* Project16Tests.swift */; };
 		34B8278022E3788D00ED0034 /* Capital.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B8277F22E3788D00ED0034 /* Capital.swift */; };
+		34C427A122ECB1A200186985 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C427A022ECB1A200186985 /* WebViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		34B8277422E3779E00ED0034 /* Project16Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project16Tests.swift; sourceTree = "<group>"; };
 		34B8277622E3779E00ED0034 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34B8277F22E3788D00ED0034 /* Capital.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capital.swift; sourceTree = "<group>"; };
+		34C427A022ECB1A200186985 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +85,7 @@
 				34B8276122E3779D00ED0034 /* ViewController.swift */,
 				34B8277F22E3788D00ED0034 /* Capital.swift */,
 				34B8276322E3779D00ED0034 /* Main.storyboard */,
+				34C427A022ECB1A200186985 /* WebViewController.swift */,
 				34B8276622E3779E00ED0034 /* Assets.xcassets */,
 				34B8276822E3779E00ED0034 /* LaunchScreen.storyboard */,
 				34B8276B22E3779E00ED0034 /* Info.plist */,
@@ -203,6 +206,7 @@
 				34B8276222E3779D00ED0034 /* ViewController.swift in Sources */,
 				34B8276022E3779D00ED0034 /* AppDelegate.swift in Sources */,
 				34B8278022E3788D00ED0034 /* Capital.swift in Sources */,
+				34C427A122ECB1A200186985 /* WebViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
