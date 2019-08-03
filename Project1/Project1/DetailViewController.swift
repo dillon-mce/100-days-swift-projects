@@ -17,6 +17,8 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        assert(selectedImage != nil, "We should never be on this view without an image.")
+
         if let imageToLoad = selectedImage {
             imageView.image = UIImage(named: imageToLoad)
         }
