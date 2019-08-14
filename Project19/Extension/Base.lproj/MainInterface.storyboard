@@ -19,40 +19,144 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="oVP-pp-r40">
-                                <rect key="frame" x="0.0" y="88" width="320" height="406"/>
+                                <rect key="frame" x="20" y="160" width="280" height="274"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                             </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yvp-Tb-Dwb">
+                                <rect key="frame" x="110" y="442" width="100" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="Ej9-kC-ikI"/>
+                                    <constraint firstAttribute="height" constant="40" id="RI1-o8-Ck8"/>
+                                </constraints>
+                                <state key="normal" title="Run"/>
+                                <connections>
+                                    <action selector="done" destination="ObA-dk-sSI" eventType="touchUpInside" id="qLf-fl-u7v"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="oVP-pp-r40" firstAttribute="leading" secondItem="VVe-Uw-JpX" secondAttribute="leading" id="0sU-kH-XQp"/>
-                            <constraint firstItem="VVe-Uw-JpX" firstAttribute="bottom" secondItem="oVP-pp-r40" secondAttribute="bottom" id="SIG-Fs-eSR"/>
-                            <constraint firstItem="oVP-pp-r40" firstAttribute="top" secondItem="VVe-Uw-JpX" secondAttribute="top" id="Ujf-Xl-dds"/>
-                            <constraint firstItem="VVe-Uw-JpX" firstAttribute="trailing" secondItem="oVP-pp-r40" secondAttribute="trailing" id="imI-jD-lDA"/>
+                            <constraint firstItem="oVP-pp-r40" firstAttribute="leading" secondItem="VVe-Uw-JpX" secondAttribute="leading" constant="20" id="0sU-kH-XQp"/>
+                            <constraint firstItem="Yvp-Tb-Dwb" firstAttribute="bottom" secondItem="VVe-Uw-JpX" secondAttribute="bottom" constant="-12" id="Hgu-GK-J6b"/>
+                            <constraint firstItem="Yvp-Tb-Dwb" firstAttribute="centerX" secondItem="zMn-AG-sqS" secondAttribute="centerX" id="IeV-7z-r7B"/>
+                            <constraint firstItem="Yvp-Tb-Dwb" firstAttribute="top" secondItem="oVP-pp-r40" secondAttribute="bottom" constant="8" id="J7K-gA-tZJ"/>
+                            <constraint firstItem="oVP-pp-r40" firstAttribute="top" secondItem="VVe-Uw-JpX" secondAttribute="top" constant="20" id="Ujf-Xl-dds"/>
+                            <constraint firstItem="VVe-Uw-JpX" firstAttribute="trailing" secondItem="oVP-pp-r40" secondAttribute="trailing" constant="20" id="imI-jD-lDA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VVe-Uw-JpX"/>
                     </view>
-                    <navigationItem key="navigationItem" id="ZL2-Gd-xEG"/>
+                    <navigationItem key="navigationItem" title="Javascript" id="ZL2-Gd-xEG">
+                        <barButtonItem key="rightBarButtonItem" title="Saved Snippets" id="ED2-Pw-Ont">
+                            <connections>
+                                <segue destination="38a-M5-8K2" kind="show" id="b4z-h5-dor"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="528"/>
                     <connections>
+                        <outlet property="runButton" destination="Yvp-Tb-Dwb" id="kT0-i0-uBo"/>
                         <outlet property="scriptView" destination="oVP-pp-r40" id="MEg-7f-lxe"/>
                         <outlet property="view" destination="zMn-AG-sqS" id="Qma-de-2ek"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X47-rx-isc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="962" y="650"/>
+            <point key="canvasLocation" x="960.86956521739137" y="649.55357142857144"/>
+        </scene>
+        <!--Saved Snippets-->
+        <scene sceneID="BGo-t2-Za9">
+            <objects>
+                <tableViewController id="38a-M5-8K2" customClass="SnippetTableViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="UZo-dP-9SV">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SnippetCell" id="5GU-68-6bb">
+                                <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5GU-68-6bb" id="32g-a0-Dpl">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="38a-M5-8K2" id="cVa-ih-ftb"/>
+                            <outlet property="delegate" destination="38a-M5-8K2" id="rr6-T4-uTJ"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Saved Snippets" id="Zoe-An-btv">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Tjo-ad-iio">
+                            <connections>
+                                <segue destination="8xa-tc-WwO" kind="show" id="c8m-tY-PhQ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Amx-hL-2w5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1658" y="650"/>
+        </scene>
+        <!--New Snippet-->
+        <scene sceneID="m7x-D1-vw3">
+            <objects>
+                <viewController storyboardIdentifier="SnippetViewController" id="8xa-tc-WwO" customClass="SnippetViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="3Ze-YX-HJh">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Ls-yA-Gqi">
+                                <rect key="frame" x="20" y="160" width="374" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="4XR-bA-noG">
+                                <rect key="frame" x="20" y="198" width="374" height="644"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Vcz-G4-at3" firstAttribute="trailing" secondItem="4XR-bA-noG" secondAttribute="trailing" constant="20" id="4Gn-NS-pHu"/>
+                            <constraint firstItem="2Ls-yA-Gqi" firstAttribute="leading" secondItem="Vcz-G4-at3" secondAttribute="leading" constant="20" id="L7j-jp-C3x"/>
+                            <constraint firstItem="4XR-bA-noG" firstAttribute="leading" secondItem="Vcz-G4-at3" secondAttribute="leading" constant="20" id="OTU-BH-XV2"/>
+                            <constraint firstItem="4XR-bA-noG" firstAttribute="top" secondItem="2Ls-yA-Gqi" secondAttribute="bottom" constant="8" id="QIc-iW-95F"/>
+                            <constraint firstItem="Vcz-G4-at3" firstAttribute="trailing" secondItem="2Ls-yA-Gqi" secondAttribute="trailing" constant="20" id="TkC-3s-sOB"/>
+                            <constraint firstItem="2Ls-yA-Gqi" firstAttribute="top" secondItem="Vcz-G4-at3" secondAttribute="top" constant="20" id="uPJ-UG-Wn5"/>
+                            <constraint firstItem="Vcz-G4-at3" firstAttribute="bottom" secondItem="4XR-bA-noG" secondAttribute="bottom" constant="20" id="x0c-YF-92g"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Vcz-G4-at3"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="New Snippet" id="FyN-df-KfK">
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="r7P-wW-XAA">
+                            <connections>
+                                <action selector="saveSnippet:" destination="8xa-tc-WwO" id="aAB-M8-dqN"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="bodyTextView" destination="4XR-bA-noG" id="AfJ-gr-xdz"/>
+                        <outlet property="titleTextField" destination="2Ls-yA-Gqi" id="ahQ-f2-25p"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="syg-9o-h0b" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2452" y="658"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="z4c-Ve-01Z">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="u2C-0Q-v4B" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="aYL-wJ-nXl">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="aYL-wJ-nXl">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

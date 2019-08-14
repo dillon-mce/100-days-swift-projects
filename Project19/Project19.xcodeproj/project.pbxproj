@@ -18,6 +18,10 @@
 		340BD7DA22FF4E92006E7C21 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340BD7D822FF4E92006E7C21 /* MainInterface.storyboard */; };
 		340BD7DE22FF4E92006E7C21 /* Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 340BD7D222FF4E92006E7C21 /* Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		340BD7E422FF50E5006E7C21 /* Action.js in Resources */ = {isa = PBXBuildFile; fileRef = 340BD7E322FF50E5006E7C21 /* Action.js */; };
+		344005EA230257D70037C11D /* SnippetTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344005E9230257D70037C11D /* SnippetTableViewController.swift */; };
+		344005EC230258050037C11D /* SnippetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344005EB230258050037C11D /* SnippetViewController.swift */; };
+		344005EE230258200037C11D /* SnippetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344005ED230258200037C11D /* SnippetController.swift */; };
+		344005F02302587A0037C11D /* Snippet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344005EF2302587A0037C11D /* Snippet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +72,10 @@
 		340BD7D922FF4E92006E7C21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		340BD7DB22FF4E92006E7C21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		340BD7E322FF50E5006E7C21 /* Action.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Action.js; sourceTree = "<group>"; };
+		344005E9230257D70037C11D /* SnippetTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetTableViewController.swift; sourceTree = "<group>"; };
+		344005EB230258050037C11D /* SnippetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetViewController.swift; sourceTree = "<group>"; };
+		344005ED230258200037C11D /* SnippetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetController.swift; sourceTree = "<group>"; };
+		344005EF2302587A0037C11D /* Snippet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snippet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +150,10 @@
 			children = (
 				340BD7D422FF4E92006E7C21 /* Media.xcassets */,
 				340BD7D622FF4E92006E7C21 /* ActionViewController.swift */,
+				344005E9230257D70037C11D /* SnippetTableViewController.swift */,
+				344005EB230258050037C11D /* SnippetViewController.swift */,
+				344005ED230258200037C11D /* SnippetController.swift */,
+				344005EF2302587A0037C11D /* Snippet.swift */,
 				340BD7D822FF4E92006E7C21 /* MainInterface.storyboard */,
 				340BD7DB22FF4E92006E7C21 /* Info.plist */,
 				340BD7E322FF50E5006E7C21 /* Action.js */,
@@ -300,6 +312,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				344005EC230258050037C11D /* SnippetViewController.swift in Sources */,
+				344005EE230258200037C11D /* SnippetController.swift in Sources */,
+				344005F02302587A0037C11D /* Snippet.swift in Sources */,
+				344005EA230257D70037C11D /* SnippetTableViewController.swift in Sources */,
 				340BD7D722FF4E92006E7C21 /* ActionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

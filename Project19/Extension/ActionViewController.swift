@@ -15,14 +15,19 @@ class ActionViewController: UIViewController {
     var pageURL = ""
 
     @IBOutlet weak var scriptView: UITextView!
+    @IBOutlet weak var runButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.rightBarButtonItem =
-            UIBarButtonItem(barButtonSystemItem: .done,
+        runButton.backgroundColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
+        runButton.layer.cornerRadius = runButton.frame.height/2
+        runButton.setTitleColor(.white, for: .normal)
+
+        navigationItem.leftBarButtonItem =
+            UIBarButtonItem(barButtonSystemItem: .cancel,
                             target: self,
-                            action: #selector(done))
+                            action: #selector(cancel))
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self,
@@ -45,6 +50,9 @@ class ActionViewController: UIViewController {
 
                     DispatchQueue.main.async {
                         self?.title = self?.pageTitle
+                            if let string = self?.pageURL {
+                                self?.loadHost(from: string)
+                            }
                     }
                 }
             }
@@ -60,6 +68,11 @@ class ActionViewController: UIViewController {
         item.attachments = [customJavaScript]
 
         extensionContext?.completeRequest(returningItems: [item])
+    }
+
+    @IBAction func cancel() {
+        extensionContext?
+            .completeRequest(returningItems: extensionContext?.inputItems)
     }
 
     @objc func adjustForKeyboard(notification: Notification) {
@@ -86,6 +99,21 @@ class ActionViewController: UIViewController {
 
         let selectedRange = scriptView.selectedRange
         scriptView.scrollRangeToVisible(selectedRange)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destination = segue.destination as? SnippetTableViewController {
+            destination.dismissHandler = { [weak self] text in
+                self?.scriptView.text = text
+            }
+        }
+    }
+
+    private func loadHost(from urlString: String) {
+        if let url = URL(string: urlString) {
+            let host = url.host
+            SnippetController.currentHost = host
+        }
     }
 
 }
