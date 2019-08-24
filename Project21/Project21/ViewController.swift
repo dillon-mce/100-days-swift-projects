@@ -24,7 +24,7 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
             UIBarButtonItem(title: "Schedule",
                             style: .plain,
                             target: self,
-                            action: #selector(scheduleLocal))
+                            action: #selector(scheduleInitial))
     }
     
     @objc func registerLocal() {
@@ -38,8 +38,13 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
             }
         }
     }
-    
-    @objc func scheduleLocal() {
+
+    @objc func scheduleInitial() {
+        scheduleLocal()
+    }
+
+    func scheduleLocal(_ timeInterval: TimeInterval = 5) {
+
         registerCategories()
         let center = UNUserNotificationCenter.current()
 
@@ -58,7 +63,7 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         //        dateComponents.minute = 30
         //        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents,
         //                                                    repeats: true)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5,
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval,
                                                         repeats: false)
 
         let request = UNNotificationRequest(identifier: UUID().uuidString,
@@ -74,8 +79,10 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         let show = UNNotificationAction(identifier: "show",
                                         title: "Tell me more…",
                                         options: .foreground)
+        let delay = UNNotificationAction(identifier: "delay",
+                                         title: "Remind Me Later")
         let category = UNNotificationCategory(identifier: "alarm",
-                                              actions: [show],
+                                              actions: [show, delay],
                                               intentIdentifiers: [])
 
         center.setNotificationCategories([category])
@@ -86,19 +93,32 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         if let customData = userInfo["customData"] as? String {
-            print("Custom data received: \(customData)")
 
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
-                print("Default identifier")
+                presentAlert(title: "Default Action",
+                             message: "Looks like you just tapped on the notification")
             case "show":
-                print("Show more information")
+                presentAlert(title: "Show Action",
+                             message: "Looks like you tapped on the 'Tell Me More' button")
+            case "delay":
+                scheduleLocal(10)
             default:
                 break
             }
         }
 
         completionHandler()
+    }
+
+    func presentAlert(title: String? = nil, message: String? = nil) {
+        let alertController = UIAlertController(title: title,
+                                                message: message,
+                                                preferredStyle: .alert)
+        let okay = UIAlertAction(title: "Okay", style: .cancel)
+        alertController.addAction(okay)
+
+        present(alertController, animated: true)
     }
 }
 
