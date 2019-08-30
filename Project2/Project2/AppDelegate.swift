@@ -74,9 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Build notifications for each of those days
         days.map(buildNotification)
             // And add them all to the notification center
-            .forEach {
-                center.add($0)
-        }
+            .forEach { center.add($0) }
     }
 
     func buildNotification(on weekday: Int) -> UNNotificationRequest {
