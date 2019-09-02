@@ -18,20 +18,43 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNKNOWN" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KW8-T0-hin">
-                                <rect key="frame" x="111" y="424" width="192" height="48"/>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="40"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="muV-5N-fyy">
+                                <rect key="frame" x="111.5" y="409.5" width="191.5" height="77"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some Beacon" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NwK-9N-KPY">
+                                        <rect key="frame" x="20.5" y="0.0" width="150.5" height="29"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNKNOWN" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KW8-T0-hin">
+                                        <rect key="frame" x="0.0" y="29" width="191.5" height="48"/>
+                                        <fontDescription key="fontDescription" type="system" weight="thin" pointSize="40"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6L2-U1-gff">
+                                <rect key="frame" x="79" y="133.5" width="256" height="256"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="256" id="eby-6F-h1q"/>
+                                    <constraint firstAttribute="height" constant="256" id="rN3-LP-Mo5"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="KW8-T0-hin" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cjQ-Wv-B5C"/>
-                            <constraint firstItem="KW8-T0-hin" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="hhg-Ic-mOq"/>
+                            <constraint firstItem="muV-5N-fyy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8J7-Ed-9BL"/>
+                            <constraint firstItem="muV-5N-fyy" firstAttribute="top" secondItem="6L2-U1-gff" secondAttribute="bottom" constant="20" id="K1R-ty-qqu"/>
+                            <constraint firstItem="6L2-U1-gff" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="mEL-Q9-G0p"/>
+                            <constraint firstItem="muV-5N-fyy" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="x4J-KP-uz0"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="beaconLabel" destination="NwK-9N-KPY" id="aO5-qy-U5Z"/>
+                        <outlet property="circleView" destination="6L2-U1-gff" id="IyI-ZF-JLJ"/>
                         <outlet property="distanceLabel" destination="KW8-T0-hin" id="y2Y-LZ-2fc"/>
                     </connections>
                 </viewController>
