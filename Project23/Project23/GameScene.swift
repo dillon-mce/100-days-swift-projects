@@ -34,6 +34,18 @@ class GameScene: SKScene {
         }
     }
 
+    let gameOverLabel: SKLabelNode = {
+        let node = SKLabelNode(fontNamed: "Chalkduster")
+        node.horizontalAlignmentMode = .center
+        node.fontSize = 120
+        node.text = "Game Over!"
+        node.setScale(0.001)
+
+        node.position = CGPoint(x: 512, y: 384)
+
+        return node
+    }()
+
     var livesImages: [SKSpriteNode] = []
     var lives = 3
 
@@ -63,31 +75,11 @@ class GameScene: SKScene {
         addChild(background)
 
         physicsWorld.gravity = CGVector(dx: 0, dy: -6)
-        physicsWorld.speed = 0.85
 
         createScore()
-        createLives()
         createSlices()
 
-        sequence = [.oneNoBomb,
-                    .oneNoBomb,
-                    .twoWithOneBomb,
-                    .twoWithOneBomb,
-                    .three,
-                    .one,
-                    .chain]
-
-        let possible = SequenceType.allCases
-        (0 ... 1000).forEach { _ in
-            if let nextSequence = possible.randomElement() {
-                sequence.append(nextSequence)
-            }
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
-        { [weak self] in
-            self?.tossEnemies()
-        }
+        restartGame()
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -97,13 +89,13 @@ class GameScene: SKScene {
                 if node.position.y < -140 {
                     node.removeAllActions()
 
-                    if node.name == "enemy" {
+                    if node.name == "enemy"{
                         node.name = ""
                         subtractLife()
 
                         node.removeFromParent()
                         activeEnemies.remove(at: index)
-                    } else if node.name == "bombContainer" {
+                    } else if node.name == "bombContainer" || node.name == "bonus" {
                         node.name = ""
                         node.removeFromParent()
                         activeEnemies.remove(at: index)
@@ -136,6 +128,10 @@ class GameScene: SKScene {
 
     override func touchesBegan(_ touches: Set<UITouch>,
                                with event: UIEvent?) {
+        guard !isGameEnded else {
+            restartGame()
+            return
+        }
         guard let touch = touches.first else { return }
 
         activeSlicePoints.removeAll(keepingCapacity: true)
@@ -165,10 +161,13 @@ class GameScene: SKScene {
         let nodesAtPoint = nodes(at: location)
 
         for case let node as SKSpriteNode in nodesAtPoint {
-            if node.name == "enemy" {
+            switch node.name {
+            case "enemy", "bonus":
                 destroyPenguin(node)
-            } else if node.name == "bomb" {
+            case "bomb":
                 destroyBomb(node)
+            default:
+                break
             }
         }
     }
@@ -214,6 +213,11 @@ class GameScene: SKScene {
     }
 
     private func createLives() {
+        livesImages.forEach { $0.removeFromParent() }
+        livesImages.removeAll(keepingCapacity: true)
+
+        lives = 3
+
         (0 ..< 3).forEach {
             let spriteNode = SKSpriteNode(imageNamed: "sliceLife")
 
@@ -250,7 +254,7 @@ class GameScene: SKScene {
     private func createEnemy(forceBomb: ForceBomb = .random) {
         let enemy: SKSpriteNode
 
-        var enemyType = Int.random(in: 0...6)
+        var enemyType = Int.random(in: 0...7)
 
         if forceBomb == .never {
             enemyType = 1
@@ -284,6 +288,11 @@ class GameScene: SKScene {
                 emitter.position = CGPoint(x: 76, y: 64)
                 enemy.addChild(emitter)
             }
+        } else if enemyType == 7 {
+            enemy = SKSpriteNode(imageNamed: "penguin")
+            run(SKAction.playSoundFileNamed("launch.caf",
+                                            waitForCompletion: false))
+            enemy.name = "bonus"
         } else {
             enemy = SKSpriteNode(imageNamed: "penguin")
             run(SKAction.playSoundFileNamed("launch.caf",
@@ -291,7 +300,8 @@ class GameScene: SKScene {
             enemy.name = "enemy"
         }
 
-        let randomX = Int.random(in: 64...960)
+        let xPositionRange = enemy.name == "bonus" ? 520...760 : 64...960
+        let randomX = Int.random(in: xPositionRange)
         let randomPosition = CGPoint(x: randomX,
                                      y: -128)
         enemy.position = randomPosition
@@ -312,7 +322,8 @@ class GameScene: SKScene {
             randomXVelocity = -outsideXVel
         }
 
-        let randomYVelocity = Int.random(in: 24...32)
+        let yVelocityRange = enemy.name == "bonus" ? 48...64 : 24...32
+        let randomYVelocity = Int.random(in: yVelocityRange)
 
         enemy.physicsBody = SKPhysicsBody(circleOfRadius: 64)
         enemy.physicsBody?.velocity = CGVector(dx: randomXVelocity * 40,
@@ -396,6 +407,7 @@ class GameScene: SKScene {
             addChild(emitter)
         }
 
+        let modifier = node.name == "bonus" ? 5 : 1
         node.name = ""
         node.physicsBody?.isDynamic = false
 
@@ -405,7 +417,7 @@ class GameScene: SKScene {
         let seq = SKAction.sequence([group, .removeFromParent()])
         node.run(seq)
 
-        score += 1
+        score += modifier
         if let index = activeEnemies.firstIndex(of: node) {
             activeEnemies.remove(at: index)
         }
@@ -469,7 +481,6 @@ class GameScene: SKScene {
 
         isGameEnded = true
         physicsWorld.speed = 0
-        isUserInteractionEnabled = false
 
         bombSoundEffect?.stop()
         bombSoundEffect = nil
@@ -477,6 +488,49 @@ class GameScene: SKScene {
         if triggeredByBomb {
             let newTexture = SKTexture(imageNamed: "sliceLifeGone")
             livesImages.forEach { $0.texture = newTexture }
+        }
+
+        addChild(gameOverLabel)
+        let scaleAction = SKAction.scale(to: 1.0, duration: 0.5)
+        gameOverLabel.run(scaleAction)
+    }
+
+    func restartGame() {
+        isGameEnded = false
+
+        gameOverLabel.removeFromParent()
+        gameOverLabel.setScale(0.001)
+
+        activeEnemies.forEach { $0.removeFromParent() }
+        activeEnemies.removeAll()
+
+        popupTime = 0.9
+        sequencePosition = 0
+        chainDelay = 3.0
+        nextSequenceQueued = true
+        physicsWorld.speed = 0.85
+        score = 0
+
+        createLives()
+
+        sequence = [.oneNoBomb,
+                    .oneNoBomb,
+                    .twoWithOneBomb,
+                    .twoWithOneBomb,
+                    .three,
+                    .one,
+                    .chain]
+
+        let possible = SequenceType.allCases
+        (0 ... 1000).forEach { _ in
+            if let nextSequence = possible.randomElement() {
+                sequence.append(nextSequence)
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2)
+        { [weak self] in
+            self?.tossEnemies()
         }
     }
 
