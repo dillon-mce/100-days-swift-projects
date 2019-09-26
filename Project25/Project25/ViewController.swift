@@ -23,12 +23,19 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
         let cameraButton = UIBarButtonItem(barButtonSystemItem: .camera,
                                            target: self,
                                            action: #selector(importPicture))
-        navigationItem.rightBarButtonItem = cameraButton
+
+        let messageButton = UIBarButtonItem(barButtonSystemItem: .compose,
+                                            target: self,
+                                            action: #selector(composeMessage))
+        navigationItem.rightBarButtonItems = [cameraButton, messageButton]
+
+
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add,
                                         target: self,
                                         action: #selector(showConnectionPrompt))
-        navigationItem.leftBarButtonItem = addButton
+        let infoButton = UIBarButtonItem(title: "Info", style: .plain, target: self, action: #selector(showInfo))
+        navigationItem.leftBarButtonItems = [addButton, infoButton]
 
         mcSession = MCSession(peer: peerID,
                               securityIdentity: nil,
@@ -94,6 +101,50 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
         present(ac, animated: true)
     }
 
+    @objc func composeMessage() {
+        let ac = UIAlertController(title: "Send a message",
+                                   message: "Say whatever you want. Try to keep it nice though.",
+                                   preferredStyle: .alert)
+        var textField: UITextField!
+        ac.addTextField { textfield in
+            textField = textfield
+            textField.placeholder = "Your message"
+        }
+        let send = UIAlertAction(title: "Send",
+                                 style: .default) { _ in
+                                    self.sendMessage(textField.text)
+        }
+        ac.addAction(send)
+        let cancel = UIAlertAction(title: "Cancel",
+                                         style: .cancel)
+        ac.addAction(cancel)
+        present(ac, animated: true)
+    }
+
+    @objc func showInfo() {
+        guard let mcSession = mcSession else { return }
+        let title = "Session Info"
+        var message = "Connected Users:\n"
+        message += mcSession.connectedPeers.map { $0.displayName }.joined(separator: "\n")
+        presentAlert(title: title, message: message)
+    }
+
+    private func sendMessage(_ message: String?) {
+        guard let mcSession = mcSession else { return }
+        guard mcSession.connectedPeers.count > 0 else { return }
+        guard let message = message else { return }
+        guard let messageData = message.data(using: .utf8) else { return }
+        do {
+            try mcSession.send(messageData,
+                                toPeers: mcSession.connectedPeers,
+                                with: .reliable)
+        } catch {
+            let title = "Error Sending Message"
+            let message = error.localizedDescription
+            presentAlert(title: title, message: message)
+        }
+    }
+
     private func startHosting(action: UIAlertAction) {
         guard let mcSession = mcSession else { return }
         mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "hws-project25",
@@ -120,12 +171,21 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
                                toPeers: mcSession.connectedPeers,
                                with: .reliable)
         } catch {
-            let ac = UIAlertController(title: "Error Sending Image",
-                                       message: error.localizedDescription,
-                                       preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK",
-                                       style: .default))
-            present(ac, animated: true)
+            let title = "Error Sending Image"
+            let message = error.localizedDescription
+            presentAlert(title: title, message: message)
+        }
+    }
+
+    private func presentAlert(title: String? = nil,
+                              message: String? = nil) {
+        let ac = UIAlertController(title: title,
+                                   message: message,
+                                   preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK",
+                                   style: .default))
+        DispatchQueue.main.async {
+            self.present(ac, animated: true)
         }
     }
 }
@@ -146,6 +206,8 @@ extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate {
 
         case .notConnected:
             print("Not Connected: \(peerID.displayName)")
+            let title = "\(peerID.displayName) Disconnected"
+            presentAlert(title: title)
 
         @unknown default:
             print("Unknown state received: \(peerID.displayName)")
@@ -160,6 +222,9 @@ extension ViewController: MCSessionDelegate, MCBrowserViewControllerDelegate {
             if let image = UIImage(data: data) {
                 self?.images.insert(image, at: 0)
                 self?.collectionView.reloadData()
+            } else if let message = String(data: data, encoding: .utf8) {
+                let title = "\(peerID.displayName) Says:"
+                self?.presentAlert(title: title, message: message)
             }
         }
     }
