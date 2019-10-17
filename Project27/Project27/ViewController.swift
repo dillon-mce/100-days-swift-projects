@@ -22,7 +22,7 @@ class ViewController: UIViewController {
 
     @IBAction func redraw(_ sender: Any) {
         currentDrawType += 1
-        currentDrawType %= 6
+        currentDrawType %= 8
 
         switch currentDrawType {
         case 0:
@@ -37,7 +37,10 @@ class ViewController: UIViewController {
             drawLines()
         case 5:
             drawImagesAndText()
-
+        case 6:
+            drawEmoji()
+        case 7:
+            drawTWIN()
         default:
             break
         }
@@ -197,6 +200,115 @@ class ViewController: UIViewController {
 
             let mouse = UIImage(named: "mouse")
             mouse?.draw(at: CGPoint(x: 300, y: 150))
+        }
+
+        imageView.image = image
+    }
+
+    func drawEmoji() {
+        let size = CGSize(width: 512,
+                          height: 512)
+        let renderer = UIGraphicsImageRenderer(size: size)
+
+        let image = renderer.image { context in
+            let rectangle = CGRect(origin: .zero,
+                                   size: size)
+                .insetBy(dx: 10, dy: 10)
+            let cgContext = context.cgContext
+
+            // Draw base yellow circle
+            let path = UIBezierPath(ovalIn: rectangle)
+            path.addClip()
+
+            let colorspace = CGColorSpace(name: CGColorSpace.sRGB)
+            let colors = [UIColor.yellow.cgColor,
+                          UIColor.orange.cgColor]
+            let locations: [CGFloat] = [0.5, 1.0]
+
+            guard let gradient = CGGradient(colorsSpace: colorspace,
+                                            colors: colors as CFArray,
+                                            locations: locations)
+                else { return }
+
+            cgContext.clip()
+            let center = CGPoint(x: size.width/2,
+                                 y: size.height/2)
+
+            cgContext.drawRadialGradient(gradient,
+                                         startCenter: center,
+                                         startRadius: 0,
+                                         endCenter: center,
+                                         endRadius: size.width*0.65,
+                                         options: CGGradientDrawingOptions())
+
+            // Add eyes
+            let eyeOneRect = CGRect(x: 160,
+                                    y: 155,
+                                    width: 50,
+                                    height: 70)
+            cgContext.addEllipse(in: eyeOneRect)
+
+            let eyeTwoRect = CGRect(x: size.width-210,
+                                    y: 155,
+                                    width: 50,
+                                    height: 70)
+            cgContext.addEllipse(in: eyeTwoRect)
+
+            // Add mouth
+            let mouthStart = CGPoint(x: 80, y: 290)
+            let mouthEnd = CGPoint(x: size.width-80, y: 290)
+            cgContext.move(to: mouthStart)
+            cgContext.addCurve(to: mouthEnd,
+                               control1: CGPoint(x: 100, y: 320),
+                               control2: CGPoint(x: size.width-100, y: 320))
+
+            cgContext.addCurve(to: mouthStart,
+                               control1: CGPoint(x: size.width-140, y: 480),
+                               control2: CGPoint(x: 140, y: 480))
+
+            cgContext.setFillColor(UIColor.brown.cgColor)
+
+            cgContext.drawPath(using: .fill)
+        }
+
+        imageView.image = image
+    }
+
+    func drawTWIN() {
+        let size = CGSize(width: 512,
+                          height: 512)
+        let renderer = UIGraphicsImageRenderer(size: size)
+
+        let image = renderer.image { context in
+            let cgContext = context.cgContext
+
+            let xOffset = 50
+            // T
+            cgContext.move(to: CGPoint(x: 50 + xOffset, y: 160))
+            cgContext.addLine(to: CGPoint(x: 130 + xOffset, y: 160))
+            cgContext.move(to: CGPoint(x: 90 + xOffset, y: 160))
+            cgContext.addLine(to: CGPoint(x: 90 + xOffset, y: 300))
+
+            // W
+            cgContext.move(to: CGPoint(x: 136 + xOffset, y: 160))
+            cgContext.addLine(to: CGPoint(x: 156 + xOffset, y: 290))
+            cgContext.addLine(to: CGPoint(x: 176 + xOffset, y: 180))
+            cgContext.addLine(to: CGPoint(x: 196 + xOffset, y: 290))
+            cgContext.addLine(to: CGPoint(x: 216 + xOffset, y: 160))
+
+            // I
+            cgContext.move(to: CGPoint(x: 232 + xOffset, y: 160))
+            cgContext.addLine(to: CGPoint(x: 232 + xOffset, y: 300))
+
+            // N
+            cgContext.move(to: CGPoint(x: 248 + xOffset, y: 300))
+            cgContext.addLine(to: CGPoint(x: 248 + xOffset, y: 165))
+            cgContext.addLine(to: CGPoint(x: 318 + xOffset, y: 295))
+            cgContext.addLine(to: CGPoint(x: 318 + xOffset, y: 160))
+
+            cgContext.setStrokeColor(UIColor.black.cgColor)
+            cgContext.setLineWidth(4)
+            cgContext.drawPath(using: .stroke)
         }
 
         imageView.image = image
