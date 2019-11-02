@@ -18,6 +18,7 @@ class ViewController: UIViewController {
 
         title = "Nothing to see here"
 
+
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self,
                                        selector: #selector(adjustForKeyboard),
@@ -59,10 +60,7 @@ class ViewController: UIViewController {
                 }
             }
         } else {
-            let title = "Biometry unavailable"
-            let message = "Your device is not configured for biometric authentication."
-            self.presentErrorAlert(title: title,
-                                   message: message)
+            unlockWithPassword()
         }
     }
 
@@ -97,6 +95,17 @@ class ViewController: UIViewController {
         title = "Secret stuff!"
 
         secret.text = KeychainWrapper.standard.string(forKey: Key.secretMessage)
+
+        navigationItem.rightBarButtonItem =
+            UIBarButtonItem(barButtonSystemItem: .done,
+                            target: self,
+                            action: #selector(saveSecretMessage))
+
+        navigationItem.leftBarButtonItem =
+            UIBarButtonItem(title: "Set Password",
+                            style: .plain,
+                            target: self,
+                            action: #selector(setPassword))
     }
 
     @objc private func saveSecretMessage() {
@@ -107,17 +116,72 @@ class ViewController: UIViewController {
         secret.isHidden = true
         title = "Nothing to see here"
 
+        navigationItem.rightBarButtonItem = nil
+        navigationItem.leftBarButtonItem = nil
+    }
+
+    @objc private func setPassword() {
+        let alertController = UIAlertController(title: "Choose a password",
+                                                message: nil,
+                                                preferredStyle: .alert)
+        var passwordField: UITextField!
+        alertController.addTextField { textfield in
+            textfield.placeholder = "Your new password"
+            textfield.isSecureTextEntry = true
+
+            passwordField = textfield
+        }
+
+        let set = UIAlertAction(title: "Set Password",
+                                style: .default) { _ in
+            guard let password = passwordField.text else { return }
+            KeychainWrapper.standard.set(password,
+                                         forKey: Key.password)
+        }
+
+        alertController.addAction(set)
+        alertController.addAction(.cancel)
+
+        present(alertController, animated: true)
+    }
+
+    @objc private func unlockWithPassword() {
+        let alertController = UIAlertController(title: "What's the password?",
+                                                message: nil,
+                                                preferredStyle: .alert)
+        var passwordField: UITextField!
+        alertController.addTextField { textfield in
+            textfield.placeholder = "Your password"
+            textfield.isSecureTextEntry = true
+
+            passwordField = textfield
+        }
+
+        let unlock = UIAlertAction(title: "Unlock",
+                                style: .default) { _ in
+            if passwordField.text ==  KeychainWrapper.standard.string(forKey: Key.password) ?? "" {
+                self.unlockSecretMessage()
+            }
+        }
+
+        alertController.addAction(unlock)
+        alertController.addAction(.cancel)
+
+        present(alertController, animated: true)
     }
 
 }
 
 enum Key {
-    static secretMessage = "SecretMessage"
+    static let secretMessage = "SecretMessage"
+    static let password = "SecretPassword"
 }
 
 extension UIAlertAction {
     static let ok = UIAlertAction(title: "OK",
                                   style: .default)
+    static let cancel = UIAlertAction(title: "Cancel",
+                                      style: .cancel)
 }
 
 extension ViewController {

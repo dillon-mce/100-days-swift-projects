@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Unlock your saved faces with your face.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) uses your camera to let you take pictures of people.</string>
 	<key>CFBundleDevelopmentRegion</key>

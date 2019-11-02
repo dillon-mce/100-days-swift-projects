@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import LocalAuthentication
 
 class ViewController:
     UICollectionViewController,
@@ -17,11 +18,13 @@ class ViewController:
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationItem.leftBarButtonItem =
-            UIBarButtonItem(barButtonSystemItem: .add,
-                            target: self,
-                            action: #selector(addNewPerson))
+
+        setupLockView()
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(lockView),
+                                               name: UIApplication.willResignActiveNotification,
+                                               object: nil)
     }
 
 
@@ -76,9 +79,9 @@ class ViewController:
     
     @objc func addNewPerson() {
         let picker = UIImagePickerController()
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            picker.sourceType = .camera
-        }
+//        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+//            picker.sourceType = .camera
+//        }
         picker.allowsEditing = true
         picker.delegate = self
         present(picker, animated: true)
@@ -141,5 +144,98 @@ class ViewController:
         alertController.addAction(saveAction)
         present(alertController, animated: true)
     }
+
+    lazy var lockedView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        let button = UIButton(type: .system)
+        button.setTitle("Authenticate", for: .normal)
+        button.addTarget(self,
+                         action: #selector(authenticate),
+                         for: .touchUpInside)
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+
+        return view
+    }()
+
+    private func setupLockView() {
+        view.addSubview(lockedView)
+        NSLayoutConstraint.activate([
+            lockedView.topAnchor.constraint(equalTo: view.topAnchor),
+            lockedView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            lockedView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            lockedView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+
+    @objc private func unlockView() {
+        navigationItem.rightBarButtonItem =
+            UIBarButtonItem(barButtonSystemItem: .add,
+                            target: self,
+                            action: #selector(addNewPerson))
+
+        lockedView.isHidden = true
+    }
+
+    @objc private func lockView() {
+        navigationItem.rightBarButtonItem = nil
+        lockedView.isHidden = false
+    }
+
+    @objc func authenticate() {
+        let context = LAContext()
+        var error: NSError?
+
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                                     error: &error) {
+            let reason = "Use your fingerprint to unlock your saved faces."
+
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                                   localizedReason: reason) {
+                [weak self] success, authenticationError in
+
+                DispatchQueue.main.async {
+                    if success {
+                        self?.unlockView()
+                    } else {
+                        let title = "Authentication failed"
+                        let message = "You could not be verified; please try again."
+                        self?.presentErrorAlert(title: title,
+                                                message: message)
+                    }
+                }
+            }
+        } else {
+            let title = "Biometry unavailable"
+            let message = "Your device is not configured for biometric authentication."
+            self.presentErrorAlert(title: title,
+                                   message: message)
+        }
+    }
 }
 
+extension UIAlertAction {
+    static let ok = UIAlertAction(title: "OK",
+                                  style: .default)
+    static let cancel = UIAlertAction(title: "Cancel",
+                                      style: .cancel)
+}
+
+extension ViewController {
+    func presentErrorAlert(title: String, message: String?) {
+        let ac = UIAlertController(title: title,
+                                   message: message,
+                                   preferredStyle: .alert)
+        ac.addAction(.ok)
+        self.present(ac, animated: true)
+    }
+}
